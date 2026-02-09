@@ -1,12 +1,13 @@
 <!--
 ---
 name: Python Agent Framework Demos
-description: Colección de ejemplos en Python para Microsoft Agent Framework usando GitHub Models o Azure OpenAI.
+description: Colección de ejemplos en Python para Microsoft Agent Framework usando GitHub Models o Azure AI Foundry.
 languages:
 - python
 products:
 - azure-openai
 - azure
+- ai-services
 page_type: sample
 urlFragment: python-agentframework-demos
 ---
@@ -17,7 +18,7 @@ urlFragment: python-agentframework-demos
 [![Abrir en GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://codespaces.new/Azure-Samples/python-agentframework-demos)
 [![Abrir en Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/python-agentframework-demos)
 
-Este repositorio ofrece ejemplos de [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/) usando LLMs de [GitHub Models](https://github.com/marketplace/models). Estos modelos son gratuitos para cualquiera con una cuenta de GitHub, hasta un [límite diario](https://docs.github.com/github-models/prototyping-with-ai-models#rate-limits).
+Este repositorio ofrece ejemplos de [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/) usando LLMs de [GitHub Models](https://github.com/marketplace/models), [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/) u otros proveedores de modelos. Los modelos de GitHub son gratuitos para cualquiera con una cuenta de GitHub, hasta un [límite diario](https://docs.github.com/github-models/prototyping-with-ai-models#rate-limits).
 
 * [Cómo empezar](#cómo-empezar)
   * [GitHub Codespaces](#github-codespaces)
@@ -25,9 +26,8 @@ Este repositorio ofrece ejemplos de [Microsoft Agent Framework](https://learn.mi
   * [Entorno local](#entorno-local)
 * [Configurar proveedores de modelos](#configurar-proveedores-de-modelos)
   * [Usar GitHub Models](#usar-github-models)
-  * [Usar modelos de Azure OpenAI](#usar-modelos-de-azure-openai)
+  * [Usar modelos de Azure AI Foundry](#usar-modelos-de-azure-ai-foundry)
   * [Usar modelos de OpenAI.com](#usar-modelos-de-openaicom)
-  * [Usar modelos de Ollama](#usar-modelos-de-ollama)
 * [Ejecutar los ejemplos en Python](#ejecutar-los-ejemplos-en-python)
 * [Recursos](#recursos)
 
@@ -88,7 +88,7 @@ Una opción relacionada es VS Code Dev Containers, que abrirá el proyecto en tu
 
 ## Configurar proveedores de modelos
 
-Estos ejemplos se pueden ejecutar con una cuenta de Azure OpenAI, OpenAI.com, servidor local de Ollama o modelos de GitHub, dependiendo de las variables de entorno que configures. Todos los scripts hacen referencia a las variables de entorno de un archivo `.env`, y se proporciona un archivo de ejemplo `.env.sample`. Las instrucciones específicas de cada proveedor se encuentran a continuación.
+Estos ejemplos se pueden ejecutar con Azure AI Foundry, OpenAI.com o GitHub Models, dependiendo de las variables de entorno que configures. Todos los scripts hacen referencia a las variables de entorno de un archivo `.env`, y se proporciona un archivo de ejemplo `.env.sample`. Las instrucciones específicas de cada proveedor se encuentran a continuación.
 
 ## Usar GitHub Models
 
@@ -110,13 +110,13 @@ Si quieres ejecutar los scripts localmente, necesitas configurar la variable de 
     export GITHUB_TOKEN=tu_token_de_acceso_personal
     ```
 
-10. Opcionalmente, puedes usar un modelo diferente a "gpt-4o" configurando la variable de entorno `GITHUB_MODEL`. Usa un modelo que soporte llamadas de funciones, como: `gpt-5`, `gpt-5-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
+10. Opcionalmente, puedes usar un modelo diferente a "gpt-5-mini" configurando la variable de entorno `GITHUB_MODEL`. Usa un modelo que soporte llamadas de funciones, como: `gpt-5`, `gpt-5-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
 
-## Usar modelos de Azure OpenAI
+## Usar modelos de Azure AI Foundry
 
-Puedes ejecutar todos los ejemplos en este repositorio usando GitHub Models. Si quieres ejecutar los ejemplos usando modelos de Azure OpenAI, necesitas provisionar los recursos de Azure AI, lo que generará costos.
+Puedes ejecutar todos los ejemplos en este repositorio usando GitHub Models. Si quieres ejecutar los ejemplos usando modelos de Azure AI Foundry, necesitas provisionar los recursos de Azure AI, lo que generará costos.
 
-Este proyecto incluye infraestructura como código (IaC) para provisionar despliegues de Azure OpenAI de "gpt-4o" y "text-embedding-3-large". La IaC está definida en el directorio `infra` y usa Azure Developer CLI para provisionar los recursos.
+Este proyecto incluye infraestructura como código (IaC) para provisionar despliegues de Azure OpenAI de "gpt-5-mini" y "text-embedding-3-large" a través de Azure AI Foundry. La IaC está definida en el directorio `infra` y usa Azure Developer CLI para provisionar los recursos.
 
 1. Asegúrate de tener instalado [Azure Developer CLI (azd)](https://aka.ms/install-azd).
 
@@ -161,31 +161,6 @@ Este proyecto incluye infraestructura como código (IaC) para provisionar despli
     API_HOST=openai
     OPENAI_API_KEY=tu_clave_api_de_openai
     OPENAI_MODEL=gpt-4o-mini
-    ```
-
-## Usar modelos de Ollama
-
-1. Instala [Ollama](https://ollama.com/) y sigue las instrucciones para configurarlo en tu máquina local.
-2. Descarga un modelo, por ejemplo:
-
-    ```shell
-    ollama pull qwen3:30b
-    ```
-
-    Ten en cuenta que la mayoría de los modelos no soportan llamadas de herramientas en la medida requerida por los frameworks de agentes, así que elige un modelo en consecuencia.
-
-3. Crea un archivo `.env` copiando el archivo `.env.sample` y actualizándolo con tu endpoint de Ollama y nombre de modelo.
-
-    ```bash
-    cp .env.sample .env
-    ```
-
-4. Actualiza el archivo `.env` con tu endpoint de Ollama y nombre de modelo (cualquier modelo que hayas descargado):
-
-    ```bash
-    API_HOST=ollama
-    OLLAMA_ENDPOINT=http://localhost:11434/v1
-    OLLAMA_MODEL=llama3.1
     ```
 
 ## Ejecutar los ejemplos en Python
