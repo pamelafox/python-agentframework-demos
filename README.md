@@ -173,6 +173,52 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
 | [workflow_basic.py](examples/workflow_basic.py) | A workflow-based agent. |
+| [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [.NET Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
+
+## Using the Aspire Dashboard for telemetry
+
+The [agent_otel_aspire.py](examples/agent_otel_aspire.py) example can export OpenTelemetry traces, metrics, and structured logs to the [.NET Aspire Dashboard](https://aspire.dev/dashboard/standalone/), a free standalone container for visualizing telemetry.
+
+1. Start the Aspire Dashboard:
+
+    ```shell
+    docker run --rm -it -d \
+        -p 18888:18888 \
+        -p 4317:18889 \
+        --name aspire-dashboard \
+        mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    ```
+
+2. Get the login token from the container logs:
+
+    ```shell
+    docker logs aspire-dashboard
+    ```
+
+    Look for the line containing `Login to the dashboard at http://localhost:18888/login?t=<TOKEN>`. Copy the token or open the URL directly.
+
+3. Run the example with telemetry export enabled:
+
+    ```shell
+    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 uv run python examples/agent_otel_aspire.py
+    ```
+
+4. Open the dashboard at <http://localhost:18888> and explore:
+
+    * **Traces**: See the full span tree — agent invocation → chat completion → tool execution
+    * **Metrics**: View token usage and operation duration histograms
+    * **Structured Logs**: Browse conversation messages (system, user, assistant, tool)
+    * **GenAI visualizer**: Select a chat completion span to see the rendered conversation
+
+    Without `OTEL_EXPORTER_OTLP_ENDPOINT` set, the example runs normally with no telemetry export and no errors.
+
+5. When done, stop the dashboard:
+
+    ```shell
+    docker stop aspire-dashboard
+    ```
+
+For the full Python + Aspire guide, see [Use the Aspire dashboard with Python apps](https://aspire.dev/dashboard/standalone-for-python/).
 
 ## Resources
 
