@@ -171,6 +171,7 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_basic.py](examples/agent_basic.py) | A basic informational agent. |
 | [agent_tool.py](examples/agent_tool.py) | An agent with a single weather tool. |
 | [agent_tools.py](examples/agent_tools.py) | A weekend planning agent with multiple tools. |
+| [agent_thread.py](examples/agent_thread.py) | Thread persistence for multi-turn conversations with memory across messages. |
 | [agent_supervisor.py](examples/agent_supervisor.py) | A supervisor orchestrating activity and recipe sub-agents. |
 | [workflow_magenticone.py](examples/workflow_magenticone.py) | A MagenticOne multi-agent workflow. |
 | [workflow_hitl.py](examples/workflow_hitl.py) | Human-in-the-loop (HITL) for tool-enabled agents with human feedback. |
