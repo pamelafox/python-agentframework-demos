@@ -42,7 +42,7 @@ else:
 
 
 async def main() -> None:
-    """Ejecuta un agente que usa un servidor MCP remoto (Microsoft Learn) para responder preguntas de documentación."""
+    """Run an agent that uses a remote MCP server (Microsoft Learn) to answer documentation questions."""
     async with (
         MCPStreamableHTTPTool(
             name="Microsoft Learn MCP",
@@ -53,7 +53,6 @@ async def main() -> None:
             instructions=(
                 "Ayudas con preguntas sobre la documentación de Microsoft. "
                 "Usa las herramientas disponibles para buscar documentación relevante. "
-                "Responde en español."
             ),
             tools=[mcp_server],
         ) as agent,

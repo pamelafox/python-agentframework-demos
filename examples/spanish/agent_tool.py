@@ -44,9 +44,9 @@ else:
 
 
 def get_weather(
-    city: Annotated[str, Field(description="Nombre de la ciudad")],
+    city: Annotated[str, Field(description="City name")],
 ) -> dict:
-    """Devuelve datos meteorológicos para una ciudad: temperatura y descripción."""
+    """Return weather data for a city: temperature and description."""
     logger.info(f"Obteniendo el clima para {city}")
     if random.random() < 0.05:
         return {

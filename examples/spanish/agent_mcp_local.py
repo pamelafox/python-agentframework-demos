@@ -44,15 +44,14 @@ else:
 
 
 async def main() -> None:
-    """Ejecuta un agente conectado a un servidor MCP local para registrar gastos."""
+    """Run an agent connected to a local MCP server to log expenses."""
     async with (
-        MCPStreamableHTTPTool(name="Servidor MCP de Gastos", url=MCP_SERVER_URL) as mcp_server,
+        MCPStreamableHTTPTool(name="Expenses MCP Server", url=MCP_SERVER_URL) as mcp_server,
         ChatAgent(
             chat_client=client,
             instructions=(
                 "Ayudas a la gente con tareas usando las herramientas disponibles. "
                 f"La fecha de hoy es {datetime.now().strftime('%Y-%m-%d')}. "
-                "Responde en español."
             ),
             tools=[mcp_server],
         ) as agent,

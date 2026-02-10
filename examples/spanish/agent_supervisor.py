@@ -51,10 +51,10 @@ else:
 
 
 def get_weather(
-    city: Annotated[str, Field(description="Ciudad para consultar el clima.")],
-    date: Annotated[str, Field(description="Fecha (YYYY-MM-DD) para la que se quiere el clima.")],
+    city: Annotated[str, Field(description="City to fetch the weather for.")],
+    date: Annotated[str, Field(description="Date (YYYY-MM-DD) to fetch the weather for.")],
 ) -> dict:
-    """Devuelve datos meteorológicos para una ciudad y fecha dadas."""
+    """Return weather data for a given city and date."""
     logger.info(f"Obteniendo el clima para {city} en {date}")
     if random.random() < 0.05:
         return {"temperature": 72, "description": "Soleado"}
@@ -63,10 +63,10 @@ def get_weather(
 
 
 def get_activities(
-    city: Annotated[str, Field(description="Ciudad para consultar actividades.")],
-    date: Annotated[str, Field(description="Fecha (YYYY-MM-DD) para consultar actividades.")],
+    city: Annotated[str, Field(description="City to fetch activities for.")],
+    date: Annotated[str, Field(description="Date (YYYY-MM-DD) to fetch activities for.")],
 ) -> list[dict]:
-    """Devuelve una lista de actividades para la ciudad y la fecha indicadas."""
+    """Return a list of activities for the given city and date."""
     logger.info(f"Obteniendo actividades para {city} en {date}")
     return [
         {"name": "Senderismo", "location": city},
@@ -76,7 +76,7 @@ def get_activities(
 
 
 def get_current_date() -> str:
-    """Obtiene la fecha actual del sistema (YYYY-MM-DD)."""
+    """Get the current system date (YYYY-MM-DD)."""
     logger.info("Obteniendo la fecha actual")
     return datetime.now().strftime("%Y-%m-%d")
 
@@ -93,7 +93,7 @@ weekend_agent = ChatAgent(
 
 
 async def plan_weekend(query: str) -> str:
-    """Planifica un fin de semana según la consulta del usuario y devuelve la respuesta final."""
+    """Plan a weekend from the user query and return the final response."""
     logger.info("Herramienta: plan_weekend invocada")
     response = await weekend_agent.run(query)
     return response.text
@@ -105,9 +105,9 @@ async def plan_weekend(query: str) -> str:
 
 
 def find_recipes(
-    query: Annotated[str, Field(description="Consulta del usuario o comida/ingrediente deseado")],
+    query: Annotated[str, Field(description="User query or desired meal/ingredient")],
 ) -> list[dict]:
-    """Devuelve recetas (JSON) basadas en una consulta."""
+    """Return recipes (JSON) based on a query."""
     logger.info(f"Buscando recetas para '{query}'")
     if "pasta" in query.lower():
         recipes = [
@@ -141,7 +141,7 @@ def find_recipes(
 
 
 def check_fridge() -> list[str]:
-    """Devuelve una lista JSON de ingredientes actualmente en el refrigerador."""
+    """Return a JSON list of ingredients currently in the fridge."""
     logger.info("Revisando los ingredientes del refrigerador")
     if random.random() < 0.5:
         items = ["pasta", "salsa de tomate", "pimientos", "aceite de oliva"]
@@ -162,7 +162,7 @@ meal_agent = ChatAgent(
 
 
 async def plan_meal(query: str) -> str:
-    """Planifica una comida según la consulta del usuario y devuelve la respuesta final."""
+    """Plan a meal from the user query and return the final response."""
     logger.info("Herramienta: plan_meal invocada")
     response = await meal_agent.run(query)
     return response.text
