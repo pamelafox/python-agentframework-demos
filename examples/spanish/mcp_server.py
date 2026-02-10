@@ -46,7 +46,7 @@ class Categoria(Enum):
 
 @mcp.tool
 async def agregar_gasto(
-    date: Annotated[date, "Fecha del gasto en formato AAAA-MM-DD"],
+    fecha_gasto: Annotated[date, "Fecha del gasto en formato AAAA-MM-DD"],
     amount: Annotated[float, "Monto numérico positivo del gasto"],
     category: Annotated[Categoria, "Etiqueta de categoría"],
     description: Annotated[str, "Descripción legible del gasto"],
@@ -56,7 +56,7 @@ async def agregar_gasto(
     if amount <= 0:
         return "Error: El monto debe ser positivo"
 
-    date_iso = date.isoformat()
+    date_iso = fecha_gasto.isoformat()
     logger.info(f"Agregando gasto: ${amount} por {description} el {date_iso}")
 
     try:
@@ -106,4 +106,4 @@ async def obtener_datos_gastos() -> str:
 
 if __name__ == "__main__":
     logger.info("Servidor MCP de Gastos iniciando (modo HTTP en puerto 8000)")
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=8000)
+    mcp.run(transport="streamable-http", host="127.0.0.1", port=8000)
