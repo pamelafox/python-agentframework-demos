@@ -64,6 +64,7 @@ Una opción relacionada es VS Code Dev Containers, que abrirá el proyecto en tu
 1. Asegúrate de tener instaladas las siguientes herramientas:
 
     * [Python 3.10+](https://www.python.org/downloads/)
+    * [uv](https://docs.astral.sh/uv/getting-started/installation/)
     * Git
 
 2. Clona el repositorio:
@@ -73,17 +74,10 @@ Una opción relacionada es VS Code Dev Containers, que abrirá el proyecto en tu
     cd python-agentframework-demos
     ```
 
-3. Configura un entorno virtual:
+3. Instala las dependencias:
 
     ```shell
-    python -m venv .venv
-    source .venv/bin/activate  # En Windows: .venv\Scripts\activate
-    ```
-
-4. Instala los requisitos:
-
-    ```shell
-    pip install -r requirements.txt
+    uv sync
     ```
 
 ## Configurar proveedores de modelos
