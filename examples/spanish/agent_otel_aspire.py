@@ -84,7 +84,7 @@ def get_current_time(
 
 
 agent = ChatAgent(
-    name="agente-clima-hora",
+    name="weather-time-agent",
     chat_client=client,
     instructions="Eres un asistente útil que puede consultar información del clima y la hora.",
     tools=[get_weather, get_current_time],
