@@ -29,7 +29,8 @@ if otlp_endpoint:
     logger.info(f"OpenTelemetry export enabled — sending to {otlp_endpoint}")
 else:
     logger.info(
-        "Set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 in .env to export telemetry to the Aspire Dashboard"
+        "Set OTEL_EXPORTER_OTLP_ENDPOINT in .env to export telemetry to the Aspire Dashboard. "
+        "Use http://aspire-dashboard:18889 in Codespaces/Dev Containers or http://localhost:4317 locally."
     )
 
 # Configure OpenAI client based on environment

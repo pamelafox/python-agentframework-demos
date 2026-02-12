@@ -179,40 +179,52 @@ You can run the examples in this repository by executing the scripts in the `exa
 
 The [agent_otel_aspire.py](examples/agent_otel_aspire.py) example can export OpenTelemetry traces, metrics, and structured logs to a [Aspire Dashboard](https://aspire.dev/dashboard/standalone/).
 
-1. Start the Aspire Dashboard:
+### In GitHub Codespaces / Dev Containers
 
-    ```sh
-    docker run --rm -it -d -p 18888:18888 -p 4317:18889 --name aspire-dashboard mcr.microsoft.com/dotnet/aspire-dashboard:latest
-    ```
+The Aspire Dashboard runs automatically as a service alongside the dev container. No extra setup is needed.
 
-2. Get the login token from the container logs:
+1. The `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable is already set by the dev container.
 
-    ```sh
-    docker logs aspire-dashboard
-    ```
-
-    Look for the line containing `Login to the dashboard at http://localhost:18888/login?t=<TOKEN>`. Copy the token or open the URL directly.
-
-3. Add the OTLP endpoint to your `.env` file:
-
-    ```sh
-    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
-    ```
-
-4. Run the example:
+2. Run the example:
 
     ```sh
     uv run agent_otel_aspire.py
     ```
 
-5. Open the dashboard at <http://localhost:18888> and explore:
+3. Open the dashboard at <http://localhost:18888> and explore:
 
     * **Traces**: See the full span tree — agent invocation → chat completion → tool execution
     * **Metrics**: View token usage and operation duration histograms
     * **Structured Logs**: Browse conversation messages (system, user, assistant, tool)
     * **GenAI visualizer**: Select a chat completion span to see the rendered conversation
 
-6. When done, stop the dashboard:
+### Local environment (without Dev Containers)
+
+If you're running locally without Dev Containers, you need to start the Aspire Dashboard manually:
+
+1. Start the Aspire Dashboard:
+
+    ```sh
+    docker run --rm -it -d -p 18888:18888 -p 4317:18889 --name aspire-dashboard \
+        -e DASHBOARD__FRONTEND__AUTHMODE=Unsecured \
+        mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    ```
+
+2. Add the OTLP endpoint to your `.env` file:
+
+    ```sh
+    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+    ```
+
+3. Run the example:
+
+    ```sh
+    uv run agent_otel_aspire.py
+    ```
+
+4. Open the dashboard at <http://localhost:18888> and explore.
+
+5. When done, stop the dashboard:
 
     ```shell
     docker stop aspire-dashboard

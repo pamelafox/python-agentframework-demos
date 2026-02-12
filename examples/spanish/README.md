@@ -180,46 +180,58 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 
 El ejemplo [agent_otel_aspire.py](agent_otel_aspire.py) puede exportar trazas, métricas y logs estructurados de OpenTelemetry a un [Aspire Dashboard](https://aspire.dev/dashboard/standalone/).
 
-1. Inicia el Aspire Dashboard:
+### En GitHub Codespaces / Dev Containers
 
-    ```sh
-    docker run --rm -it -d -p 18888:18888 -p 4317:18889 --name aspire-dashboard mcr.microsoft.com/dotnet/aspire-dashboard:latest
-    ```
+El Aspire Dashboard se ejecuta automaticamente como un servicio junto al dev container. No necesitas configuracion adicional.
 
-2. Obtén el token de inicio de sesión de los logs del contenedor:
+1. La variable de entorno `OTEL_EXPORTER_OTLP_ENDPOINT` ya esta configurada por el dev container.
 
-    ```sh
-    docker logs aspire-dashboard
-    ```
-
-    Busca la línea que contiene `Login to the dashboard at http://localhost:18888/login?t=<TOKEN>`. Copia el token o abre la URL directamente.
-
-3. Agrega el endpoint OTLP a tu archivo `.env`:
-
-    ```sh
-    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
-    ```
-
-4. Ejecuta el ejemplo:
+2. Ejecuta el ejemplo:
 
     ```sh
     uv run agent_otel_aspire.py
     ```
 
-5. Abre el dashboard en <http://localhost:18888> y explora:
+3. Abre el dashboard en <http://localhost:18888> y explora:
 
-    * **Traces**: Ve el árbol completo de spans — invocación del agente → completado del chat → ejecución de herramientas
-    * **Metrics**: Consulta histogramas de uso de tokens y duración de operaciones
-    * **Structured Logs**: Navega los mensajes de la conversación (sistema, usuario, asistente, herramienta)
-    * **Visualizador GenAI**: Selecciona un span de completado del chat para ver la conversación renderizada
+    * **Traces**: Ve el arbol completo de spans — invocacion del agente → completado del chat → ejecucion de herramientas
+    * **Metrics**: Consulta histogramas de uso de tokens y duracion de operaciones
+    * **Structured Logs**: Navega los mensajes de la conversacion (sistema, usuario, asistente, herramienta)
+    * **Visualizador GenAI**: Selecciona un span de completado del chat para ver la conversacion renderizada
 
-6. Cuando termines, detén el dashboard:
+### Entorno local (sin Dev Containers)
+
+Si ejecutas localmente sin Dev Containers, necesitas iniciar el Aspire Dashboard manualmente:
+
+1. Inicia el Aspire Dashboard:
+
+    ```sh
+    docker run --rm -it -d -p 18888:18888 -p 4317:18889 --name aspire-dashboard \
+        -e DASHBOARD__FRONTEND__AUTHMODE=Unsecured \
+        mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    ```
+
+2. Agrega el endpoint OTLP a tu archivo `.env`:
+
+    ```sh
+    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+    ```
+
+3. Ejecuta el ejemplo:
+
+    ```sh
+    uv run agent_otel_aspire.py
+    ```
+
+4. Abre el dashboard en <http://localhost:18888> y explora.
+
+5. Cuando termines, deten el dashboard:
 
     ```sh
     docker stop aspire-dashboard
     ```
 
-Para la guía completa de Python + Aspire, consulta [Usar el Aspire Dashboard con apps de Python](https://aspire.dev/dashboard/standalone-for-python/).
+Para la guia completa de Python + Aspire, consulta [Usar el Aspire Dashboard con apps de Python](https://aspire.dev/dashboard/standalone-for-python/).
 
 ## Recursos
 
