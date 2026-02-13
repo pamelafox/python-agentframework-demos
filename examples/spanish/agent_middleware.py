@@ -283,10 +283,10 @@ async def main() -> None:
         context: AgentContext,
         call_next: Callable[[], Awaitable[None]],
     ) -> None:
-        """Middleware a nivel de ejecución que solo aplica a esta ejecución específica."""
-        logger.info("[🏃🏽‍♀️ Middleware de Ejecución] Este middleware solo aplica a esta ejecución")
+        """Middleware de ejecución que solo aplica a esta ejecución específica."""
+        logger.info("[🏃🏽‍♀️ Execution Middleware] Este middleware solo aplica a esta ejecución")
         await call_next()
-        logger.info("[🏃🏽‍♀️ Middleware de Ejecución] Ejecución completada")
+        logger.info("[🏃🏽‍♀️ Execution Middleware] Ejecución completada")
 
     response = await agent.run(
         "¿Cómo estará el clima en Barcelona?",
