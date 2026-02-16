@@ -147,7 +147,6 @@ agent = Agent(
 
 USER_QUERY = "What different middleware patterns are used across this project? Read the relevant files to find out."
 
-
 async def main() -> None:
     """Run a single query and log token usage."""
     print("\n[bold]=== Code Research WITHOUT Sub-Agents ===[/bold]")

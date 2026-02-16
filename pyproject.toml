@@ -16,10 +16,11 @@ dependencies = [
     "opentelemetry-exporter-otlp-proto-grpc",
     "psycopg[binary]",
     "pgvector",
-    "agent-framework-core @ git+https://github.com/microsoft/agent-framework.git@9506fb28f6994f22b671a55dc26b6fc23811f73b#subdirectory=python/packages/core",
-    "agent-framework-devui @ git+https://github.com/microsoft/agent-framework.git@9506fb28f6994f22b671a55dc26b6fc23811f73b#subdirectory=python/packages/devui",
-    "agent-framework-redis @ git+https://github.com/microsoft/agent-framework.git@9506fb28f6994f22b671a55dc26b6fc23811f73b#subdirectory=python/packages/redis",
-    "agent-framework-mem0 @ git+https://github.com/microsoft/agent-framework.git@9506fb28f6994f22b671a55dc26b6fc23811f73b#subdirectory=python/packages/mem0",
+    "agent-framework-core @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/core",
+    "agent-framework-devui @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/devui",
+    "agent-framework-redis @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/redis",
+    "agent-framework-mem0 @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/mem0",
+    "agent-framework-azure-ai-search @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/azure-ai-search",
 ]
 
 [tool.ruff]

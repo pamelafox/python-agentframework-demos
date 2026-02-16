@@ -10,9 +10,18 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "agent-framework-azure-ai-search"
+version = "1.0.0b260212"
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+dependencies = [
+    { name = "agent-framework-core" },
+    { name = "azure-search-documents" },
+]
+
+[[package]]
 name = "agent-framework-core"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b#9506fb28f6994f22b671a55dc26b6fc23811f73b" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
 dependencies = [
     { name = "azure-ai-projects" },
     { name = "azure-identity" },
@@ -30,7 +39,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-devui"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b#9506fb28f6994f22b671a55dc26b6fc23811f73b" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "fastapi" },
@@ -41,7 +50,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-mem0"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b#9506fb28f6994f22b671a55dc26b6fc23811f73b" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "mem0ai" },
@@ -50,7 +59,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-redis"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b#9506fb28f6994f22b671a55dc26b6fc23811f73b" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -280,6 +289,15 @@ wheels = [
 ]
 
 [[package]]
+name = "azure-common"
+version = "1.1.28"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3e/71/f6f71a276e2e69264a97ad39ef850dca0a04fce67b12570730cb38d0ccac/azure-common-1.1.28.zip", hash = "sha256:4ac0cd3214e36b6a1b6a442686722a5d8cc449603aa833f3f0f40bda836704a3", size = 20914, upload-time = "2022-02-03T19:39:44.373Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/55/7f118b9c1b23ec15ca05d15a578d8207aa1706bc6f7c87218efffbbf875d/azure_common-1.1.28-py2.py3-none-any.whl", hash = "sha256:5c12d3dcf4ec20599ca6b0d3e09e86e146353d443e7fcc050c9a19c1f9df20ad", size = 14462, upload-time = "2022-02-03T19:39:42.417Z" },
+]
+
+[[package]]
 name = "azure-core"
 version = "1.38.0"
 source = { registry = "https://pypi.org/simple" }
@@ -306,6 +324,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/06/8d/1a6c41c28a37eab26dc85ab6c86992c700cd3f4a597d9ed174b0e9c69489/azure_identity-1.25.1.tar.gz", hash = "sha256:87ca8328883de6036443e1c37b40e8dc8fb74898240f61071e09d2e369361456", size = 279826, upload-time = "2025-10-06T20:30:02.194Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/83/7b/5652771e24fff12da9dde4c20ecf4682e606b104f26419d139758cc935a6/azure_identity-1.25.1-py3-none-any.whl", hash = "sha256:e9edd720af03dff020223cd269fa3a61e8f345ea75443858273bcb44844ab651", size = 191317, upload-time = "2025-10-06T20:30:04.251Z" },
+]
+
+[[package]]
+name = "azure-search-documents"
+version = "11.7.0b2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "azure-common" },
+    { name = "azure-core" },
+    { name = "isodate" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f9/ba/bde0f03e0a742ba3bbcc929f91ed2f3b1420c2bb84c9a7f878f3b87ebfce/azure_search_documents-11.7.0b2.tar.gz", hash = "sha256:b6e039f8038ff2210d2057e704e867c6e29bb46bfcd400da4383e45e4b8bb189", size = 423956, upload-time = "2025-11-14T20:09:32.876Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/26/ed4498374f9088818278ac225f2bea688b4ec979d81bf83a5355c8c366af/azure_search_documents-11.7.0b2-py3-none-any.whl", hash = "sha256:f82117b321344a84474269ed26df194c24cca619adc024d981b1b86aee3c6f05", size = 432037, upload-time = "2025-11-14T20:09:34.347Z" },
 ]
 
 [[package]]
@@ -2644,6 +2677,7 @@ name = "python-agentframework-demos"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "agent-framework-azure-ai-search" },
     { name = "agent-framework-core" },
     { name = "agent-framework-devui" },
     { name = "agent-framework-mem0" },
@@ -2664,10 +2698,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-framework-core", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b" },
-    { name = "agent-framework-devui", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b" },
-    { name = "agent-framework-mem0", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b" },
-    { name = "agent-framework-redis", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=9506fb28f6994f22b671a55dc26b6fc23811f73b" },
+    { name = "agent-framework-azure-ai-search", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
+    { name = "agent-framework-core", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
+    { name = "agent-framework-devui", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
+    { name = "agent-framework-mem0", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
+    { name = "agent-framework-redis", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
     { name = "aiohttp" },
     { name = "azure-identity" },
     { name = "dotenv-azd" },
