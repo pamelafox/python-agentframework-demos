@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import tempfile
 from typing import Annotated
 
 from agent_framework import ChatAgent, tool
@@ -13,6 +14,7 @@ from azure.ai.evaluation import (
     ResponseCompletenessEvaluator,
     TaskAdherenceEvaluator,
     ToolCallAccuracyEvaluator,
+    evaluate,
 )
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
@@ -66,10 +68,14 @@ else:
         model=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
     )
 
+# Opcional: Establece AZURE_AI_PROJECT en .env para registrar resultados en Azure AI Foundry.
+# Ejemplo: https://tu-cuenta.services.ai.azure.com/api/projects/tu-proyecto
+AZURE_AI_PROJECT = os.getenv("AZURE_AI_PROJECT")
+
 
 @tool
 def get_weather(
-    city: Annotated[str, Field(description="City to fetch the weather forecast for.")],
+    city: Annotated[str, Field(description="The city to get the weather forecast for.")],
     date_range: Annotated[str, Field(description="Date range in format 'YYYY-MM-DD to YYYY-MM-DD'.")],
 ) -> dict:
     """Devuelve el pronóstico del clima para una ciudad durante un rango de fechas."""
@@ -103,7 +109,7 @@ def search_flights(
 
 @tool
 def search_hotels(
-    city: Annotated[str, Field(description="City to search hotels in.")],
+    city: Annotated[str, Field(description="The city to search hotels in.")],
     checkin: Annotated[str, Field(description="Check-in date in YYYY-MM-DD format.")],
     checkout: Annotated[str, Field(description="Check-out date in YYYY-MM-DD format.")],
     max_price_per_night: Annotated[int, Field(description="Maximum price per night in USD.")],
@@ -119,7 +125,7 @@ def search_hotels(
 
 @tool
 def get_activities(
-    city: Annotated[str, Field(description="City to find activities in.")],
+    city: Annotated[str, Field(description="The city to find activities in.")],
     interests: Annotated[list[str], Field(description="List of interests, e.g. ['hiking', 'museums'].")],
 ) -> list[dict]:
     """Devuelve sugerencias de actividades para una ciudad según los intereses del usuario."""
@@ -207,16 +213,29 @@ def convert_to_evaluator_messages(messages) -> list[dict]:
                     }
                 )
             elif c.type == "function_result":
+                if c.call_id:
+                    if content_items:
+                        evaluator_messages.append({"role": role, "content": content_items})
+                        content_items = []
+                    evaluator_messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": c.call_id,
+                            "content": [
+                                {
+                                    "type": "tool_result",
+                                    "tool_result": c.result,
+                                }
+                            ],
+                        }
+                    )
+                    continue
                 content_items.append(
                     {
                         "type": "tool_result",
                         "tool_result": c.result,
                     }
                 )
-                if c.call_id:
-                    evaluator_messages.append({"role": role, "tool_call_id": c.call_id, "content": content_items})
-                    content_items = []
-                    continue
             elif c.type == "text" and c.text:
                 content_items.append({"type": "text", "text": c.text})
         if content_items:
@@ -260,14 +279,12 @@ async def main():
     response = await agent.run(query)
     print(Panel(response.text, title="Respuesta del Agente", border_style="blue"))
 
-    # Ver: https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators
     eval_query = [
         {"role": "system", "content": AGENT_INSTRUCTIONS},
         {"role": "user", "content": [{"type": "text", "text": query}]},
     ]
     eval_response = convert_to_evaluator_messages(response.messages)
 
-    # ResponseCompletenessEvaluator compara la respuesta contra esta verdad base
     ground_truth = (
         "Un itinerario completo de 3 días a Tokio desde Nueva York incluyendo: opciones de vuelos de ida y vuelta "
         "con precios, recomendaciones de hoteles dentro del presupuesto por noche, actividades de senderismo "
@@ -278,44 +295,102 @@ async def main():
 
     logger.info("Ejecutando evaluadores de agente...")
 
-    # TODO: is_reasoning_model=True es necesario porque el endpoint de GitHub Models rechaza el parámetro
-    # max_tokens que las plantillas prompty del SDK codifican directamente. Este flag lo cambia a
-    # max_completion_tokens. En Azure OpenAI puede no ser necesario. Remover cuando el SDK actualice sus plantillas.
     evaluator_kwargs = {"model_config": eval_model_config, "is_reasoning_model": True}
-    intent_evaluator = IntentResolutionEvaluator(**evaluator_kwargs)
-    completeness_evaluator = ResponseCompletenessEvaluator(**evaluator_kwargs)
-    adherence_evaluator = TaskAdherenceEvaluator(**evaluator_kwargs)
-    tool_accuracy_evaluator = ToolCallAccuracyEvaluator(**evaluator_kwargs)
-
-    intent_result = intent_evaluator(query=eval_query, response=eval_response)
-    completeness_result = completeness_evaluator(response=response.text, ground_truth=ground_truth)
-    adherence_result = adherence_evaluator(query=eval_query, response=eval_response)
-    tool_accuracy_result = tool_accuracy_evaluator(
-        query=eval_query, response=eval_response, tool_definitions=tool_definitions
-    )
-
-    # Las claves de salida siguen el patrón: {clave}, {clave}_result, {clave}_reason
     result_keys = {
         "IntentResolution": "intent_resolution",
         "ResponseCompleteness": "response_completeness",
         "TaskAdherence": "task_adherence",
         "ToolCallAccuracy": "tool_call_accuracy",
     }
-    evaluation_results = {}
-    for name, result in [
-        ("IntentResolution", intent_result),
-        ("ResponseCompleteness", completeness_result),
-        ("TaskAdherence", adherence_result),
-        ("ToolCallAccuracy", tool_accuracy_result),
-    ]:
-        key = result_keys[name]
-        evaluation_results[name] = {
-            "score": result.get(key, "N/A"),
-            "result": result.get(f"{key}_result", "N/A"),
-            "reason": result.get(f"{key}_reason", result.get("error_message", "N/A")),
+
+    if AZURE_AI_PROJECT:
+        logger.info(f"Registrando resultados de evaluación en Azure AI project: {AZURE_AI_PROJECT}")
+
+        eval_data_row = {
+            "query": eval_query,
+            "response": eval_response,
+            "response_text": response.text,
+            "ground_truth": ground_truth,
+            "tool_definitions": tool_definitions,
         }
 
-    display_evaluation_results(evaluation_results)
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
+            f.write(json.dumps(eval_data_row) + "\n")
+            eval_data_file = f.name
+
+        try:
+            eval_result = evaluate(
+                data=eval_data_file,
+                evaluation_name="travel-planner-agent-eval",
+                evaluators={
+                    "intent_resolution": IntentResolutionEvaluator(**evaluator_kwargs),
+                    "response_completeness": ResponseCompletenessEvaluator(**evaluator_kwargs),
+                    "task_adherence": TaskAdherenceEvaluator(**evaluator_kwargs),
+                    "tool_call_accuracy": ToolCallAccuracyEvaluator(**evaluator_kwargs),
+                },
+                # ResponseCompletenessEvaluator espera texto plano, no una lista de mensajes,
+                # así que usamos response_text y ground_truth explícitamente.
+                # Los demás evaluadores se auto-mapean correctamente ya que las claves de datos coinciden.
+                evaluator_config={
+                    "response_completeness": {
+                        "column_mapping": {
+                            "response": "${data.response_text}",
+                            "ground_truth": "${data.ground_truth}",
+                        }
+                    },
+                },
+                azure_ai_project=AZURE_AI_PROJECT,
+            )
+
+            # Parsear resultados de la salida del batch evaluate()
+            evaluation_results = {}
+            rows = eval_result.get("rows", [])
+            row = rows[0] if rows else {}
+
+            for display_name, key in result_keys.items():
+                evaluation_results[display_name] = {
+                    "score": row.get(f"outputs.{key}.{key}", "N/A"),
+                    "result": row.get(f"outputs.{key}.{key}_result", "N/A"),
+                    "reason": row.get(f"outputs.{key}.{key}_reason", "N/A"),
+                }
+
+            display_evaluation_results(evaluation_results)
+
+            studio_url = eval_result.get("studio_url")
+            if studio_url:
+                print(f"\n[bold blue]Ver resultados en Azure AI Foundry:[/bold blue] {studio_url}")
+        finally:
+            os.unlink(eval_data_file)
+    else:
+        intent_evaluator = IntentResolutionEvaluator(**evaluator_kwargs)
+        completeness_evaluator = ResponseCompletenessEvaluator(**evaluator_kwargs)
+        adherence_evaluator = TaskAdherenceEvaluator(**evaluator_kwargs)
+        tool_accuracy_evaluator = ToolCallAccuracyEvaluator(**evaluator_kwargs)
+
+        intent_result = intent_evaluator(query=eval_query, response=eval_response, tool_definitions=tool_definitions)
+        completeness_result = completeness_evaluator(response=response.text, ground_truth=ground_truth)
+        adherence_result = adherence_evaluator(
+            query=eval_query, response=eval_response, tool_definitions=tool_definitions
+        )
+        tool_accuracy_result = tool_accuracy_evaluator(
+            query=eval_query, response=eval_response, tool_definitions=tool_definitions
+        )
+
+        evaluation_results = {}
+        for name, result in [
+            ("IntentResolution", intent_result),
+            ("ResponseCompleteness", completeness_result),
+            ("TaskAdherence", adherence_result),
+            ("ToolCallAccuracy", tool_accuracy_result),
+        ]:
+            key = result_keys[name]
+            evaluation_results[name] = {
+                "score": result.get(key, "N/A"),
+                "result": result.get(f"{key}_result", "N/A"),
+                "reason": result.get(f"{key}_reason", result.get("error_message", "N/A")),
+            }
+
+        display_evaluation_results(evaluation_results)
 
     if async_credential:
         await async_credential.close()
