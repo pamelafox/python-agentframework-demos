@@ -6,8 +6,10 @@ from datetime import datetime, timezone
 from typing import Annotated
 
 from agent_framework import ChatAgent
+from agent_framework.observability import create_resource, enable_instrumentation
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+from azure.monitor.opentelemetry import configure_azure_monitor
 from dotenv import load_dotenv
 from pydantic import Field
 from rich import print
@@ -19,27 +21,16 @@ logging.basicConfig(level=logging.WARNING, handlers=[handler], force=True, forma
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-# Configura la exportación de OpenTelemetry a Azure Application Insights (si la cadena de conexión está configurada)
+# Configura la exportación de OpenTelemetry a Azure Application Insights
+# Configura APPLICATIONINSIGHTS_CONNECTION_STRING en .env (ejecuta 'azd provision' o copia desde el Portal de Azure)
 load_dotenv(override=True)
-appinsights_connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
-if appinsights_connection_string:
-    from agent_framework.observability import create_resource, enable_instrumentation
-    from azure.monitor.opentelemetry import configure_azure_monitor
-
-    os.environ.setdefault("OTEL_SERVICE_NAME", "agent-framework-demo")
-    configure_azure_monitor(
-        connection_string=appinsights_connection_string,
-        resource=create_resource(),
-        enable_live_metrics=True,
-    )
-    enable_instrumentation(enable_sensitive_data=True)
-    logger.info("Exportación a Azure Application Insights habilitada")
-else:
-    logger.info(
-        "Configura APPLICATIONINSIGHTS_CONNECTION_STRING en .env para exportar telemetría a Azure Application "
-        "Insights. Ejecuta 'azd provision' para provisionar y configurar Application Insights automáticamente, "
-        "o configura la cadena de conexión manualmente desde el Portal de Azure."
-    )
+configure_azure_monitor(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"],
+    resource=create_resource(),
+    enable_live_metrics=True,
+)
+enable_instrumentation(enable_sensitive_data=True)
+logger.info("Exportación a Azure Application Insights habilitada")
 
 # Configura el cliente de OpenAI según el entorno
 API_HOST = os.getenv("API_HOST", "github")
