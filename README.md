@@ -192,6 +192,7 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
 | [workflow_basic.py](examples/workflow_basic.py) | A workflow-based agent. |
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
+| [agent_evaluation.py](examples/agent_evaluation.py) | Evaluate a travel planner agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) agent evaluators (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Optionally set `AZURE_AI_PROJECT` in `.env` to log results to [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
 
 ## Using the Aspire Dashboard for telemetry
 
