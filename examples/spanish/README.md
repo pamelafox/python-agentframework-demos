@@ -175,7 +175,7 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a funciones con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
 | [workflow_basic.py](workflow_basic.py) | Usa Agent Framework para crear un agente basado en flujo de trabajo. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
-| [agent_evaluation.py](agent_evaluation.py) | Evalúa un agente planificador de viajes usando evaluadores de [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). |
+| [agent_evaluation.py](agent_evaluation.py) | Evalúa un agente planificador de viajes usando evaluadores de [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Opcionalmente configura `AZURE_AI_PROJECT` en `.env` para registrar resultados en [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
 
 ## Usar el Aspire Dashboard para telemetría
 
