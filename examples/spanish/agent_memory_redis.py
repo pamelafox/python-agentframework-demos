@@ -67,7 +67,7 @@ async def example_agent_with_memory() -> None:
 
     Requiere Redis Stack (con el módulo RediSearch): revisa docker-compose.yaml.
     """
-    print("\n[bold]=== Agente con memoria en Redis (RedisProvider) ===[/bold]")
+    print("\n[bold]=== Agente con memoria en Redis (RedisContextProvider) ===[/bold]")
 
     user_id = str(uuid.uuid4())
 

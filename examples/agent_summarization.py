@@ -186,7 +186,7 @@ class SummarizationMiddleware(AgentMiddleware):
 
         # Before the agent runs: check if we should compact the history
         if session and self.context_tokens > self.token_threshold:
-            history = session.state["memory"]["messages"]
+            history = session.state.get(self.HISTORY_STATE_KEY, {}).get("messages", [])
             if len(history) > 2:
                 logger.info(
                     "[📝 Summarization] Token usage (%d) exceeds threshold (%d). "
@@ -204,7 +204,7 @@ class SummarizationMiddleware(AgentMiddleware):
                 )
 
                 # Replace session history with a single summary message
-                session.state["memory"]["messages"] = [
+                session.state[self.HISTORY_STATE_KEY]["messages"] = [
                     Message(role="assistant", text=f"[Summary of earlier conversation]\n{summary_text}"),
                 ]
 

@@ -76,8 +76,7 @@ Requisitos previos:
 """
 
 
-# NOTA: approval_mode="never_require" es por brevedad del ejemplo.
-@tool(approval_mode="never_require")
+@tool
 def fetch_product_brief(
     product_name: Annotated[str, Field(description="Product name to look up.")],
 ) -> str:
@@ -101,8 +100,7 @@ def fetch_product_brief(
     return briefs.get(product_name.lower(), f"No hay resumen almacenado para '{product_name}'.")
 
 
-# NOTA: approval_mode="never_require" es por brevedad del ejemplo.
-@tool(approval_mode="never_require")
+@tool
 def get_brand_voice_profile(
     voice_name: Annotated[str, Field(description="Brand or campaign voice to emulate.")],
 ) -> str:

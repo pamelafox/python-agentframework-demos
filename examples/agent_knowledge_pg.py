@@ -311,7 +311,7 @@ class PostgresKnowledgeProvider(BaseContextProvider):
 
         knowledge_text = "\n".join(knowledge_lines)
         context.extend_messages(
-            self,
+            self.source_id,
             [Message(role="system", text=knowledge_text)],
         )
 

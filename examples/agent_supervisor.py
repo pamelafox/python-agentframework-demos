@@ -18,7 +18,7 @@ from rich.logging import RichHandler
 handler = RichHandler(show_path=False, rich_tracebacks=True, show_level=False)
 logging.basicConfig(level=logging.WARNING, handlers=[handler], force=True, format="%(message)s")
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # Configure OpenAI client based on environment
 load_dotenv(override=True)

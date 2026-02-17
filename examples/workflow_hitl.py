@@ -76,7 +76,6 @@ Prerequisites:
 """
 
 
-# NOTE: approval_mode="never_require" is for sample brevity.
 @tool
 def fetch_product_brief(
     product_name: Annotated[str, Field(description="Product name to look up.")],
@@ -94,7 +93,6 @@ def fetch_product_brief(
     return briefs.get(product_name.lower(), f"No stored brief for '{product_name}'.")
 
 
-# NOTE: approval_mode="never_require" is for sample brevity.
 @tool
 def get_brand_voice_profile(
     voice_name: Annotated[str, Field(description="Brand or campaign voice to emulate.")],

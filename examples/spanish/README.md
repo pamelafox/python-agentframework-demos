@@ -88,6 +88,12 @@ El dev container incluye un servidor Redis, que se usa en el ejemplo `agent_hist
     docker run -d -p 6379:6379 redis:7-alpine
     ```
 
+5. *Opcional:* Para ejecutar los ejemplos de PostgreSQL (`agent_knowledge_postgres.py`, `agent_knowledge_pg.py`, `agent_knowledge_pg_rewrite.py`), necesitas PostgreSQL con pgvector corriendo localmente:
+
+    ```shell
+    docker run -d -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=LocalPasswordOnly pgvector/pgvector:pg17
+    ```
+
 ## Configurar proveedores de modelos
 
 Estos ejemplos se pueden ejecutar con Azure AI Foundry, OpenAI.com o GitHub Models, dependiendo de las variables de entorno que configures. Todos los scripts hacen referencia a las variables de entorno de un archivo `.env`, y se proporciona un archivo de ejemplo `.env.sample`. Las instrucciones específicas de cada proveedor se encuentran a continuación.

@@ -185,7 +185,7 @@ class SummarizationMiddleware(AgentMiddleware):
 
         # Antes de ejecutar el agente: revisar si hay que compactar el historial
         if session and self.context_tokens > self.token_threshold:
-            history = session.state["memory"]["messages"]
+            history = session.state.get(self.HISTORY_STATE_KEY, {}).get("messages", [])
             if len(history) > 2:
                 logger.info(
                     "[📝 Resumen] Uso de tokens (%d) excede el umbral (%d). "
@@ -203,7 +203,7 @@ class SummarizationMiddleware(AgentMiddleware):
                 )
 
                 # Reemplazar el historial de la sesión con un único mensaje de resumen
-                session.state["memory"]["messages"] = [
+                session.state[self.HISTORY_STATE_KEY]["messages"] = [
                     Message(role="assistant", text=f"[Resumen de la conversación anterior]\n{summary_text}"),
                 ]
 
