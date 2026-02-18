@@ -139,6 +139,12 @@ This project includes infrastructure as code (IaC) to provision Azure OpenAI dep
     azd auth login --use-device-code
     ```
 
+    If you are using a tenant besides the default tenant, you may need to also login with Azure CLI to that tenant:
+
+    ```shell
+    az login --tenant your-tenant-id
+    ```
+
 3. Provision the OpenAI account:
 
     ```shell

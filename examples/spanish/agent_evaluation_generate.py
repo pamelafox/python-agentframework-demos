@@ -1,26 +1,28 @@
+"""Genera datos de evaluación para el agente planificador de viajes.
+
+Ejecuta el agente con múltiples consultas de prueba y guarda los resultados en un
+archivo JSONL que se puede usar con agent_evaluation_batch.py.
+
+Uso:
+    python agent_evaluation_generate.py
+"""
+
 import asyncio
 import json
 import logging
 import os
+from pathlib import Path
 from typing import Annotated
 
 from agent_framework import Agent, tool
 from agent_framework.openai import OpenAIChatClient
-from azure.ai.evaluation import (
-    AzureOpenAIModelConfiguration,
-    IntentResolutionEvaluator,
-    OpenAIModelConfiguration,
-    ResponseCompletenessEvaluator,
-    TaskAdherenceEvaluator,
-    ToolCallAccuracyEvaluator,
-)
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from pydantic import Field
 from rich import print
 from rich.logging import RichHandler
 from rich.panel import Panel
-from rich.table import Table
 
 handler = RichHandler(show_path=False, rich_tracebacks=True, show_level=False)
 logging.basicConfig(level=logging.WARNING, handlers=[handler], force=True, format="%(message)s")
@@ -39,31 +41,15 @@ if API_HOST == "azure":
         api_key=token_provider,
         model_id=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
     )
-    eval_model_config = AzureOpenAIModelConfiguration(
-        type="azure_openai",
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-        azure_deployment=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
-    )
 elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
         model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
     )
-    eval_model_config = OpenAIModelConfiguration(
-        type="openai",
-        base_url="https://models.github.ai/inference",
-        api_key=os.environ["GITHUB_TOKEN"],
-        model="openai/gpt-5-mini",
-    )
 else:
     client = OpenAIChatClient(
         api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
-    )
-    eval_model_config = OpenAIModelConfiguration(
-        type="openai",
-        api_key=os.environ["OPENAI_API_KEY"],
-        model=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
     )
 
 
@@ -184,13 +170,55 @@ agent = Agent(
     tools=tools,
 )
 
+# Consultas de prueba y sus respuestas esperadas
+TEST_CASES = [
+    {
+        "query": (
+            "Planifica un viaje de 3 días de Nueva York (JFK) a Tokio, saliendo el 15 de marzo y "
+            "regresando el 18 de marzo de 2026. Mi presupuesto es de $2000 en total. Me gusta el senderismo "
+            "y los museos. Busca vuelos, hoteles de menos de $150/noche, consulta el clima y sugiere actividades."
+        ),
+        "ground_truth": (
+            "Un itinerario completo de 3 días a Tokio desde Nueva York incluyendo: opciones de vuelos de ida y "
+            "vuelta con precios, recomendaciones de hoteles dentro del presupuesto por noche, actividades de "
+            "senderismo (ej. Monte Takao), visitas a museos (ej. Museo Nacional de Tokio, teamLab Borderless), "
+            "pronóstico del clima para las fechas del viaje, un desglose completo de costos mostrando un total "
+            "menor a $2000, y sugerencias de equipaje basadas en el clima."
+        ),
+    },
+    {
+        "query": (
+            "Planifica un viaje de 5 días de San Francisco (SFO) a Tokio, saliendo el 1 de abril y "
+            "regresando el 6 de abril de 2026. Mi presupuesto es de $3000 en total y me encantan los museos. "
+            "Busca vuelos, hoteles de menos de $200/noche, consulta el clima y sugiere actividades en museos."
+        ),
+        "ground_truth": (
+            "Un itinerario completo de 5 días a Tokio desde San Francisco incluyendo: opciones de vuelos de ida y "
+            "vuelta con precios, recomendaciones de hoteles dentro del presupuesto por noche, sugerencias de "
+            "actividades en museos (ej. Museo Nacional de Tokio, teamLab Borderless), pronóstico del clima para "
+            "las fechas del viaje, un desglose completo de costos mostrando un total menor a $3000, y sugerencias "
+            "de equipaje basadas en el clima."
+        ),
+    },
+    {
+        "query": (
+            "Planifica un viaje de fin de semana de Los Ángeles (LAX) a Tokio, saliendo el viernes 20 de marzo "
+            "y regresando el domingo 22 de marzo de 2026. Mi presupuesto es de $1500 en total. Me gusta el "
+            "senderismo. Busca vuelos, hoteles de menos de $100/noche, consulta el clima y sugiere actividades de senderismo."
+        ),
+        "ground_truth": (
+            "Un itinerario completo de 2 días a Tokio desde Los Ángeles incluyendo: opciones de vuelos de ida y "
+            "vuelta con precios, recomendaciones de hoteles dentro del presupuesto por noche, sugerencias de "
+            "actividades de senderismo (ej. Monte Takao, Caminata por Kamakura), pronóstico del clima para las "
+            "fechas del viaje, un desglose completo de costos mostrando un total menor a $1500, y sugerencias "
+            "de equipaje basadas en el clima."
+        ),
+    },
+]
+
 
 def convert_to_evaluator_messages(messages) -> list[dict]:
-    """Convierte ChatMessages del agent framework al esquema de mensajes de Azure AI Evaluation.
-
-    Remapea tipos de contenido: function_call -> tool_call, function_result -> tool_result.
-    Ver: https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk#agent-message-schema
-    """
+    """Convierte ChatMessages del agent framework al esquema de mensajes de Azure AI Evaluation."""
     evaluator_messages = []
     for msg in messages:
         role = str(msg.role.value) if hasattr(msg.role, "value") else str(msg.role)
@@ -236,96 +264,35 @@ def convert_to_evaluator_messages(messages) -> list[dict]:
     return evaluator_messages
 
 
-def display_evaluation_results(results: dict[str, dict]) -> None:
-    """Muestra los resultados de evaluación en una tabla formateada usando rich."""
-    table = Table(title="Resultados de Evaluación del Agente", show_lines=True)
-    table.add_column("Evaluador", style="cyan", width=28)
-    table.add_column("Puntaje", style="bold", justify="center", width=8)
-    table.add_column("Resultado", justify="center", width=10)
-    table.add_column("Razón", style="dim", width=70)
-
-    for evaluator_name, result in results.items():
-        score = str(result.get("score", "N/A"))
-        pass_fail = result.get("result", "N/A")
-        reason = result.get("reason", "N/A")
-
-        if pass_fail == "pass":
-            result_str = "[green]aprobado[/green]"
-        elif pass_fail == "fail":
-            result_str = "[red]reprobado[/red]"
-        else:
-            result_str = str(pass_fail)
-
-        table.add_row(evaluator_name, score, result_str, reason)
-
-    print()
-    print(table)
-
-
 async def main():
-    query = (
-        "Planifica un viaje de 3 días de Nueva York (JFK) a Tokio, saliendo el 15 de marzo y "
-        "regresando el 18 de marzo de 2026. Mi presupuesto es de $2000 en total. Me gusta el senderismo "
-        "y los museos. Busca vuelos, hoteles de menos de $150/noche, consulta el clima y sugiere actividades."
-    )
+    output_file = Path(__file__).parent / "eval_data.jsonl"
 
-    logger.info("Ejecutando el agente planificador de viajes...")
-    response = await agent.run(query)
-    print(Panel(response.text, title="Respuesta del Agente", border_style="blue"))
+    logger.info(f"Generando datos de evaluación para {len(TEST_CASES)} casos de prueba...")
 
-    eval_query = [
-        {"role": "system", "content": AGENT_INSTRUCTIONS},
-        {"role": "user", "content": [{"type": "text", "text": query}]},
-    ]
-    eval_response = convert_to_evaluator_messages(response.messages)
+    with open(output_file, "w", encoding="utf-8") as f:
+        for i, test_case in enumerate(TEST_CASES):
+            query = test_case["query"]
+            logger.info(f"[{i + 1}/{len(TEST_CASES)}] Ejecutando agente: {query[:60]}...")
 
-    ground_truth = (
-        "Un itinerario completo de 3 días a Tokio desde Nueva York incluyendo: opciones de vuelos de ida y vuelta "
-        "con precios, recomendaciones de hoteles dentro del presupuesto por noche, actividades de senderismo "
-        "(ej. Monte Takao), visitas a museos (ej. Museo Nacional de Tokio, teamLab Borderless), pronóstico del "
-        "clima para las fechas del viaje, un desglose completo de costos mostrando un total menor a $2000, "
-        "y sugerencias de equipaje basadas en el clima."
-    )
+            response = await agent.run(query)
+            print(Panel(response.text, title=f"Respuesta {i + 1}", border_style="blue"))
 
-    logger.info("Ejecutando evaluadores de agente...")
+            eval_query = [
+                {"role": "system", "content": AGENT_INSTRUCTIONS},
+                {"role": "user", "content": [{"type": "text", "text": query}]},
+            ]
 
-    evaluator_kwargs = {"model_config": eval_model_config, "is_reasoning_model": True}
-    result_keys = {
-        "IntentResolution": "intent_resolution",
-        "ResponseCompleteness": "response_completeness",
-        "TaskAdherence": "task_adherence",
-        "ToolCallAccuracy": "tool_call_accuracy",
-    }
+            eval_data_row = {
+                "query": eval_query,
+                "response": convert_to_evaluator_messages(response.messages),
+                "response_text": response.text,
+                "ground_truth": test_case["ground_truth"],
+                "tool_definitions": tool_definitions,
+            }
+            f.write(json.dumps(eval_data_row) + "\n")
 
-    intent_evaluator = IntentResolutionEvaluator(**evaluator_kwargs)
-    completeness_evaluator = ResponseCompletenessEvaluator(**evaluator_kwargs)
-    adherence_evaluator = TaskAdherenceEvaluator(**evaluator_kwargs)
-    tool_accuracy_evaluator = ToolCallAccuracyEvaluator(**evaluator_kwargs)
-
-    intent_result = intent_evaluator(query=eval_query, response=eval_response, tool_definitions=tool_definitions)
-    completeness_result = completeness_evaluator(response=response.text, ground_truth=ground_truth)
-    adherence_result = adherence_evaluator(
-        query=eval_query, response=eval_response, tool_definitions=tool_definitions
-    )
-    tool_accuracy_result = tool_accuracy_evaluator(
-        query=eval_query, response=eval_response, tool_definitions=tool_definitions
-    )
-
-    evaluation_results = {}
-    for name, result in [
-        ("IntentResolution", intent_result),
-        ("ResponseCompleteness", completeness_result),
-        ("TaskAdherence", adherence_result),
-        ("ToolCallAccuracy", tool_accuracy_result),
-    ]:
-        key = result_keys[name]
-        evaluation_results[name] = {
-            "score": result.get(key, "N/A"),
-            "result": result.get(f"{key}_result", "N/A"),
-            "reason": result.get(f"{key}_reason", result.get("error_message", "N/A")),
-        }
-
-    display_evaluation_results(evaluation_results)
+    logger.info(f"Datos de evaluación guardados en {output_file}")
+    logger.info(f"Ejecuta la evaluación por lotes con: python agent_evaluation_batch.py {output_file}")
 
     if async_credential:
         await async_credential.close()
