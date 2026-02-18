@@ -175,6 +175,7 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a funciones con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
 | [workflow_basic.py](workflow_basic.py) | Usa Agent Framework para crear un agente basado en flujo de trabajo. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
+| [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation.py](agent_evaluation.py) | Evalúa un agente planificador de viajes usando evaluadores de [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Opcionalmente configura `AZURE_AI_PROJECT` en `.env` para registrar resultados en [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
 
 ## Usar el Aspire Dashboard para telemetría
@@ -233,6 +234,44 @@ Si ejecutas localmente sin Dev Containers, necesitas iniciar el Aspire Dashboard
     ```
 
 Para la guia completa de Python + Aspire, consulta [Usar el Aspire Dashboard con apps de Python](https://aspire.dev/dashboard/standalone-for-python/).
+
+## Exportar telemetría a Azure Application Insights
+
+El ejemplo [agent_otel_appinsights.py](agent_otel_appinsights.py) exporta trazas, métricas y logs estructurados de OpenTelemetry a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview).
+
+### Configuración
+
+Este ejemplo requiere la variable de entorno `APPLICATIONINSIGHTS_CONNECTION_STRING`. Puedes obtenerla automáticamente o manualmente:
+
+**Opción A: Automática con `azd provision`**
+
+Si ejecutas `azd provision` (consulta [Usar modelos de Azure AI Foundry](#usar-modelos-de-azure-ai-foundry)), el recurso de Application Insights se provisiona automáticamente y la cadena de conexión se escribe en tu archivo `.env`.
+
+**Opción B: Manual desde el Portal de Azure**
+
+1. Crea un recurso de Application Insights en el [Portal de Azure](https://portal.azure.com).
+2. Copia la cadena de conexión desde la página de resumen del recurso.
+3. Agrégala a tu archivo `.env`:
+
+    ```sh
+    APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...;IngestionEndpoint=...
+    ```
+
+### Ejecutar el ejemplo
+
+```sh
+uv run examples/spanish/agent_otel_appinsights.py
+```
+
+### Ver telemetría
+
+Después de ejecutar el ejemplo, navega a tu recurso de Application Insights en el Portal de Azure:
+
+* **Búsqueda de transacciones**: Ve trazas de extremo a extremo para invocaciones de agentes, completados de chat y ejecuciones de herramientas.
+* **Métricas en vivo**: Monitorea tasas de solicitudes y rendimiento en tiempo real.
+* **Rendimiento**: Analiza duraciones de operaciones e identifica cuellos de botella.
+
+Los datos de telemetría pueden tardar entre 2 y 5 minutos en aparecer en el portal.
 
 ## Recursos
 

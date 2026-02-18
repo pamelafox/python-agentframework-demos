@@ -174,6 +174,7 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
 | [workflow_basic.py](examples/workflow_basic.py) | A workflow-based agent. |
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
+| [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
 | [agent_evaluation.py](examples/agent_evaluation.py) | Evaluate a travel planner agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) agent evaluators (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Optionally set `AZURE_AI_PROJECT` in `.env` to log results to [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
 
 ## Using the Aspire Dashboard for telemetry
@@ -232,6 +233,44 @@ If you're running locally without Dev Containers, you need to start the Aspire D
     ```
 
 For the full Python + Aspire guide, see [Use the Aspire dashboard with Python apps](https://aspire.dev/dashboard/standalone-for-python/).
+
+## Exporting telemetry to Azure Application Insights
+
+The [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) example exports OpenTelemetry traces, metrics, and structured logs to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview).
+
+### Setup
+
+This example requires an `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable. You can get this automatically or manually:
+
+**Option A: Automatic via `azd provision`**
+
+If you run `azd provision` (see [Using Azure AI Foundry models](#using-azure-ai-foundry-models)), the Application Insights resource is provisioned automatically and the connection string is written to your `.env` file.
+
+**Option B: Manual from the Azure Portal**
+
+1. Create an Application Insights resource in the [Azure Portal](https://portal.azure.com).
+2. Copy the connection string from the resource's Overview page.
+3. Add it to your `.env` file:
+
+    ```sh
+    APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...;IngestionEndpoint=...
+    ```
+
+### Running the example
+
+```sh
+uv run examples/agent_otel_appinsights.py
+```
+
+### Viewing telemetry
+
+After running the example, navigate to your Application Insights resource in the Azure Portal:
+
+* **Transaction search**: See end-to-end traces for agent invocations, chat completions, and tool executions.
+* **Live Metrics**: Monitor real-time request rates and performance.
+* **Performance**: Analyze operation durations and identify bottlenecks.
+
+Telemetry data may take 2–5 minutes to appear in the portal.
 
 ## Resources
 
