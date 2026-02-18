@@ -12,7 +12,7 @@ resolution-markers = [
 [[package]]
 name = "agent-framework-azure-ai-search"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=main#1b87a073773aeeee29329ddf8b286990964cfbdf" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "azure-search-documents" },
@@ -21,7 +21,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-core"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=main#1b87a073773aeeee29329ddf8b286990964cfbdf" }
 dependencies = [
     { name = "azure-ai-projects" },
     { name = "azure-identity" },
@@ -39,7 +39,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-devui"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=main#1b87a073773aeeee29329ddf8b286990964cfbdf" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "fastapi" },
@@ -50,7 +50,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-mem0"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=main#1b87a073773aeeee29329ddf8b286990964cfbdf" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "mem0ai" },
@@ -59,7 +59,7 @@ dependencies = [
 [[package]]
 name = "agent-framework-redis"
 version = "1.0.0b260212"
-source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270#fc9c81b0b11170bdab8fa2d42bb96981e65fd270" }
+source = { git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=main#1b87a073773aeeee29329ddf8b286990964cfbdf" }
 dependencies = [
     { name = "agent-framework-core" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -4615,11 +4615,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-framework-azure-ai-search", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
-    { name = "agent-framework-core", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
-    { name = "agent-framework-devui", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
-    { name = "agent-framework-mem0", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
-    { name = "agent-framework-redis", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=fc9c81b0b11170bdab8fa2d42bb96981e65fd270" },
+    { name = "agent-framework-azure-ai-search", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fazure-ai-search&rev=main" },
+    { name = "agent-framework-core", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fcore&rev=main" },
+    { name = "agent-framework-devui", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fdevui&rev=main" },
+    { name = "agent-framework-mem0", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fmem0&rev=main" },
+    { name = "agent-framework-redis", git = "https://github.com/microsoft/agent-framework.git?subdirectory=python%2Fpackages%2Fredis&rev=main" },
     { name = "aiohttp" },
     { name = "azure-ai-evaluation", extras = ["redteam"], specifier = ">=1.15.0" },
     { name = "azure-identity" },

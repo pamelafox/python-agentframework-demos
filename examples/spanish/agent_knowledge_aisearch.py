@@ -86,7 +86,6 @@ else:
 search_credential = DefaultAzureCredential()
 
 search_provider = AzureAISearchContextProvider(
-    source_id="azure-ai-search",
     endpoint=SEARCH_ENDPOINT,
     credential=search_credential,
     knowledge_base_name=KNOWLEDGE_BASE_NAME,

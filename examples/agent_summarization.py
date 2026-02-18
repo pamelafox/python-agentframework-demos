@@ -43,6 +43,7 @@ from agent_framework import (
     AgentContext,
     AgentMiddleware,
     AgentResponse,
+    InMemoryHistoryProvider,
     Message,
     tool,
 )
@@ -139,10 +140,6 @@ class SummarizationMiddleware(AgentMiddleware):
     with a single summary message before the agent processes the next turn.
     """
 
-    # Key used by the default InMemoryHistoryProvider to store messages
-    # https://github.com/microsoft/agent-framework/issues/3941
-    HISTORY_STATE_KEY = "memory"
-
     def __init__(
         self,
         client: OpenAIChatClient,
@@ -186,7 +183,7 @@ class SummarizationMiddleware(AgentMiddleware):
 
         # Before the agent runs: check if we should compact the history
         if session and self.context_tokens > self.token_threshold:
-            history = session.state.get(self.HISTORY_STATE_KEY, {}).get("messages", [])
+            history = session.state.get(InMemoryHistoryProvider.DEFAULT_SOURCE_ID, {}).get("messages", [])
             if len(history) > 2:
                 logger.info(
                     "[📝 Summarization] Token usage (%d) exceeds threshold (%d). "
@@ -204,7 +201,7 @@ class SummarizationMiddleware(AgentMiddleware):
                 )
 
                 # Replace session history with a single summary message
-                session.state[self.HISTORY_STATE_KEY]["messages"] = [
+                session.state[InMemoryHistoryProvider.DEFAULT_SOURCE_ID]["messages"] = [
                     Message(role="assistant", text=f"[Summary of earlier conversation]\n{summary_text}"),
                 ]
 
