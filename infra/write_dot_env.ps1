@@ -17,3 +17,5 @@ Add-Content -Path .env -Value "AZURE_OPENAI_CHAT_DEPLOYMENT=$azureOpenAiChatDepl
 Add-Content -Path .env -Value "AZURE_OPENAI_CHAT_MODEL=$azureOpenAiChatModel"
 Add-Content -Path .env -Value "AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$azureOpenAiEmbeddingDeployment"
 Add-Content -Path .env -Value "AZURE_OPENAI_EMBEDDING_MODEL=$azureOpenAiEmbeddingModel"
+$appInsightsConnectionString = azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING
+Add-Content -Path .env -Value "APPLICATIONINSIGHTS_CONNECTION_STRING=$appInsightsConnectionString"

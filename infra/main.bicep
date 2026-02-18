@@ -144,6 +144,33 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.1' = {
   }
 }
 
+// Log Analytics workspace for Application Insights
+var logAnalyticsName = '${prefix}-loganalytics'
+module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.9.1' = {
+  name: 'loganalytics'
+  scope: resourceGroup
+  params: {
+    name: logAnalyticsName
+    location: location
+    tags: tags
+  }
+}
+
+// Application Insights for OpenTelemetry export
+var appInsightsName = '${prefix}-appinsights'
+module appInsights 'br/public:avm/res/insights/component:0.4.2' = {
+  name: 'appinsights'
+  scope: resourceGroup
+  params: {
+    name: appInsightsName
+    location: location
+    tags: tags
+    workspaceResourceId: logAnalytics.outputs.resourceId
+    kind: 'web'
+    applicationType: 'web'
+  }
+}
+
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
@@ -154,3 +181,6 @@ output AZURE_OPENAI_CHAT_MODEL string = azureOpenaiChatModel
 output AZURE_OPENAI_CHAT_DEPLOYMENT string = azureOpenaiChatDeployment
 output AZURE_OPENAI_EMBEDDING_MODEL string = azureOpenaiEmbeddingModel
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = azureOpenaiEmbeddingDeployment
+
+// Specific to Application Insights
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = appInsights.outputs.connectionString
