@@ -12,11 +12,10 @@ from agent_framework import (
     AgentResponse,
     AgentRunUpdateEvent,
     Agent,
-    ChatMessage,
+    Message,
     Content,
     Executor,
     RequestInfoEvent,
-    Role,
     WorkflowBuilder,
     WorkflowContext,
     WorkflowOutputEvent,
@@ -115,7 +114,7 @@ class DraftFeedbackRequest:
 
     prompt: str = ""
     draft_text: str = ""
-    conversation: list[ChatMessage] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
+    conversation: list[Message] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
 
 
 class Coordinator(Executor):
@@ -141,7 +140,7 @@ class Coordinator(Executor):
         # Writer agent response; request human feedback.
         # Preserve the full conversation so the final editor
         # can see tool traces and the initial prompt.
-        conversation: list[ChatMessage]
+        conversation: list[Message]
         if draft.full_conversation is not None:
             conversation = list(draft.full_conversation)
         else:
@@ -173,7 +172,7 @@ class Coordinator(Executor):
             await ctx.send_message(
                 AgentExecutorRequest(
                     messages=original_request.conversation
-                    + [ChatMessage(Role.USER, text="The draft is approved as-is.")],
+                    + [Message(role="user", text="The draft is approved as-is.")],
                     should_respond=True,
                 ),
                 target_id=self.final_editor_id,
@@ -181,14 +180,14 @@ class Coordinator(Executor):
             return
 
         # Human provided feedback; prompt the writer to revise.
-        conversation: list[ChatMessage] = list(original_request.conversation)
+        conversation: list[Message] = list(original_request.conversation)
         instruction = (
             "A human reviewer shared the following guidance:\n"
             f"{note or 'No specific guidance provided.'}\n\n"
             "Rewrite the draft from the previous assistant message into a polished final version. "
             "Keep the response under 120 words and reflect any requested tone adjustments."
         )
-        conversation.append(ChatMessage(Role.USER, text=instruction))
+        conversation.append(Message(role="user", text=instruction))
         await ctx.send_message(
             AgentExecutorRequest(messages=conversation, should_respond=True), target_id=self.writer_id
         )
