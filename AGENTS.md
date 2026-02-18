@@ -27,7 +27,7 @@ uv sync
 
 There are Spanish equivalents of each example in /examples/spanish.
 
-Each example .py file should have a corresponding _spanish.py file that is the translation of the original, but with the same code. Here's a guide on what should be translated vs. what should be left in English:
+Each example .py file should have a corresponding file with the same name under /examples/spanish/ that is the translation of the original, but with the same code. Here's a guide on what should be translated vs. what should be left in English:
 
 * Comments: Spanish
 * Docstrings: Spanish
