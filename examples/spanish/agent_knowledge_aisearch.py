@@ -20,12 +20,12 @@ Bases para razonamiento multi-hop entre documentos, dando resultados más
 precisos mediante planeación inteligente de consultas.
 
 Requiere:
-    - Un servicio de Azure AI Search con un Knowledge Base
+    - Un servicio de Azure AI Search con una base de conocimiento (Knowledge Base)
     - Un endpoint compatible con OpenAI (Azure OpenAI, GitHub Models u OpenAI)
 
 Variables de entorno:
     - AZURE_SEARCH_ENDPOINT: Tu endpoint de Azure AI Search
-    - AZURE_SEARCH_KNOWLEDGE_BASE_NAME: Nombre de tu Knowledge Base
+    - AZURE_SEARCH_KNOWLEDGE_BASE_NAME: Nombre de tu base de conocimiento (Knowledge Base)
     - Además de la configuración estándar de API_HOST / modelo (ver otros ejemplos)
 
 Ver también:
@@ -110,7 +110,7 @@ async def main() -> None:
     """Demuestra RAG con Azure AI Search en una conversación multi-turno."""
     async with search_provider:
         print("\n[bold]=== Recuperación de conocimiento con Azure AI Search (modo agentic) ===[/bold]")
-        print(f"[dim]Knowledge Base: {KNOWLEDGE_BASE_NAME}[/dim]\n")
+        print(f"[dim]Base de conocimiento: {KNOWLEDGE_BASE_NAME}[/dim]\n")
 
         session = agent.create_session()
 

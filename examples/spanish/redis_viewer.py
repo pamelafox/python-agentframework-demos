@@ -1,4 +1,4 @@
-"""Un script simple para ver todas las keys y values guardadas en Redis, con formato usando Rich."""
+"""Un script simple para ver todas las claves y valores guardados en Redis, con formato usando Rich."""
 
 import argparse
 import json
@@ -16,8 +16,12 @@ from rich.text import Text
 load_dotenv(override=True)
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
-parser = argparse.ArgumentParser(description="Ver keys y values en Redis.")
-parser.add_argument("--values", action="store_true", help="Mostrar values de cada key (por defecto: solo listar keys)")
+parser = argparse.ArgumentParser(description="Ver claves y valores en Redis.")
+parser.add_argument(
+    "--values",
+    action="store_true",
+    help="Mostrar valores de cada clave (por defecto: solo listar claves)",
+)
 args = parser.parse_args()
 
 r = redis.from_url(REDIS_URL)
@@ -31,10 +35,10 @@ except redis.ConnectionError:
 keys = sorted(k.decode() for k in r.keys("*"))
 
 if not keys:
-    print("[dim]No se encontraron keys en Redis.[/dim]")
+    print("[dim]No se encontraron claves en Redis.[/dim]")
     sys.exit(0)
 
-print(f"\n[bold]Se encontraron {len(keys)} key(s) en Redis[/bold]\n")
+print(f"\n[bold]Se encontraron {len(keys)} clave(s) en Redis[/bold]\n")
 
 if not args.values:
     for key in keys:
@@ -64,7 +68,7 @@ for key in keys:
                 parsed = json.loads(raw)
                 role = parsed.get("role", {}).get("value", "unknown")
                 contents = parsed.get("contents", [])
-                # Extract display text
+                # Extraer texto para mostrar
                 parts = []
                 for c in contents:
                     if c.get("type") == "text":

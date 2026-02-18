@@ -117,7 +117,7 @@ def get_current_date() -> str:
     return datetime.now().strftime("%Y-%m-%d")
 
 
-# ---- Function-based middleware ----
+# ---- Middleware basado en funciones ----
 
 
 async def timing_agent_middleware(
@@ -284,9 +284,9 @@ async def main() -> None:
         call_next: Callable[[], Awaitable[None]],
     ) -> None:
         """Middleware de ejecución que solo aplica a esta ejecución específica."""
-        logger.info("[🏃🏽‍♀️ Execution Middleware] Este middleware solo aplica a esta ejecución")
+        logger.info("[🏃🏽‍♀️ Middleware de ejecución] Este middleware solo aplica a esta ejecución")
         await call_next()
-        logger.info("[🏃🏽‍♀️ Execution Middleware] Ejecución completada")
+        logger.info("[🏃🏽‍♀️ Middleware de ejecución] Ejecución completada")
 
     response = await agent.run(
         "¿Cómo estará el clima en Barcelona?",

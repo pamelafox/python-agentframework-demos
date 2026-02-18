@@ -51,7 +51,7 @@ def get_weather(
     city: Annotated[str, Field(description="The city to get the weather for.")],
 ) -> str:
     """Devuelve datos del clima para una ciudad."""
-    logger.info(f"Getting weather for {city}")
+    logger.info(f"Obteniendo el clima para {city}")
     conditions = ["soleado", "nublado", "lluvioso", "tormentoso"]
     return f"El clima en {city} está {conditions[random.randint(0, 3)]} con una máxima de {random.randint(10, 30)}°C."
 
