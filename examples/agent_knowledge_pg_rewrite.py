@@ -374,7 +374,7 @@ class PostgresQueryRewriteProvider(BaseContextProvider):
 
 def setup_db() -> psycopg.Connection:
     """Connect to PostgreSQL and seed the knowledge base."""
-    conn = psycopg.connect(POSTGRES_URL, autocommit=True)
+    conn = psycopg.connect(POSTGRES_URL)
     create_knowledge_db(conn)
     return conn
 

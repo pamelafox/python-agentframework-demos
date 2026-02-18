@@ -320,7 +320,7 @@ class PostgresKnowledgeProvider(BaseContextProvider):
 
 def setup_db() -> psycopg.Connection:
     """Conecta a PostgreSQL y carga la base de conocimiento."""
-    conn = psycopg.connect(POSTGRES_URL, autocommit=True)
+    conn = psycopg.connect(POSTGRES_URL)
     create_knowledge_db(conn)
     return conn
 
