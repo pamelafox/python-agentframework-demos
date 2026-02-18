@@ -1,4 +1,4 @@
-"""Un script simple para ver todos los hilos y mensajes guardados en SQLite, con formato usando Rich."""
+"""Un script simple para ver todas las sesiones y mensajes guardados en SQLite, con formato usando Rich."""
 
 import argparse
 import json
@@ -11,7 +11,7 @@ from rich.panel import Panel
 
 DB_PATH = "chat_history.sqlite3"
 
-parser = argparse.ArgumentParser(description="Ver hilos y mensajes en la base de datos SQLite del historial de chat.")
+parser = argparse.ArgumentParser(description="Ver sesiones y mensajes en la base de datos SQLite del historial de chat.")
 parser.add_argument(
     "--db",
     default=DB_PATH,
@@ -20,7 +20,7 @@ parser.add_argument(
 parser.add_argument(
     "--values",
     action="store_true",
-    help="Mostrar mensajes de cada hilo (por defecto: solo listar hilos)",
+    help="Mostrar mensajes de cada sesión (por defecto: solo listar sesiones)",
 )
 args = parser.parse_args()
 
@@ -35,26 +35,26 @@ except sqlite3.Error as e:
     print(f"[red]No se puede abrir la base de datos {args.db}: {e}[/red]")
     sys.exit(1)
 
-# Obtener todos los hilos con conteo de mensajes
-threads = conn.execute(
-    "SELECT thread_id, COUNT(*) as count FROM messages GROUP BY thread_id ORDER BY thread_id"
+# Obtener todas las sesiones con conteo de mensajes
+sessions = conn.execute(
+    "SELECT session_id, COUNT(*) as count FROM messages GROUP BY session_id ORDER BY session_id"
 ).fetchall()
 
-if not threads:
-    print("[dim]No se encontraron hilos en la base de datos.[/dim]")
+if not sessions:
+    print("[dim]No se encontraron sesiones en la base de datos.[/dim]")
     sys.exit(0)
 
-print(f"\n[bold]Se encontraron {len(threads)} hilo(s) en {args.db}[/bold]\n")
+print(f"\n[bold]Se encontraron {len(sessions)} sesión(es) en {args.db}[/bold]\n")
 
 if not args.values:
-    for thread_id, count in threads:
-        print(f"  [bold cyan]{thread_id}[/bold cyan] [dim]({count} mensajes)[/dim]")
+    for session_id, count in sessions:
+        print(f"  [bold cyan]{session_id}[/bold cyan] [dim]({count} mensajes)[/dim]")
     print()
     sys.exit(0)
 
-for thread_id, count in threads:
+for session_id, count in sessions:
     rows = conn.execute(
-        "SELECT message_json FROM messages WHERE thread_id = ? ORDER BY id", (thread_id,)
+        "SELECT message_json FROM messages WHERE session_id = ? ORDER BY id", (session_id,)
     ).fetchall()
 
     panels = []
@@ -83,7 +83,7 @@ for thread_id, count in threads:
     print(
         Panel(
             Group(*panels),
-            title=f"[bold cyan]{thread_id}[/bold cyan]",
+            title=f"[bold cyan]{session_id}[/bold cyan]",
             subtitle=f"[dim]{count} mensaje(s)[/dim]",
         )
     )
