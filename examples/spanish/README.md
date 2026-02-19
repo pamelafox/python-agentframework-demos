@@ -59,6 +59,8 @@ Una opción relacionada es VS Code Dev Containers, que abrirá el proyecto en tu
 3. En la ventana de VS Code que se abre, una vez que aparezcan los archivos del proyecto (esto puede tardar varios minutos), abre una ventana de terminal.
 4. Continúa con los pasos para ejecutar los ejemplos
 
+El dev container incluye un servidor Redis, que se usa en el ejemplo `agent_history_redis.py`.
+
 ### Entorno local
 
 1. Asegúrate de tener instaladas las siguientes herramientas:
@@ -78,6 +80,18 @@ Una opción relacionada es VS Code Dev Containers, que abrirá el proyecto en tu
 
     ```shell
     uv sync
+    ```
+
+4. *Opcional:* Para ejecutar el ejemplo `agent_history_redis.py`, necesitas un servidor Redis corriendo localmente:
+
+    ```shell
+    docker run -d -p 6379:6379 redis:7-alpine
+    ```
+
+5. *Opcional:* Para ejecutar los ejemplos de PostgreSQL (`agent_knowledge_postgres.py`, `agent_knowledge_pg.py`, `agent_knowledge_pg_rewrite.py`), necesitas PostgreSQL con pgvector corriendo localmente:
+
+    ```shell
+    docker run -d -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=LocalPasswordOnly pgvector/pgvector:pg17
     ```
 
 ## Configurar proveedores de modelos
@@ -163,20 +177,25 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 
 | Ejemplo | Descripción |
 | ------- | ----------- |
-| [agent_basic.py](agent_basic.py) | Usa Agent Framework para crear un agente informativo básico. |
-| [agent_tool.py](agent_tool.py) | Usa Agent Framework para crear un agente con una única herramienta de clima. |
-| [agent_tools.py](agent_tools.py) | Usa Agent Framework para crear un agente planificador de fin de semana con múltiples herramientas. |
-| [agent_supervisor.py](agent_supervisor.py) | Usa Agent Framework con un supervisor que orquesta subagentes de actividades y recetas. |
-| [workflow_magenticone.py](workflow_magenticone.py) | Usa Agent Framework para crear un flujo de trabajo multi-agente MagenticOne. |
-| [workflow_hitl.py](workflow_hitl.py) | Usa Agent Framework con human-in-the-loop (HITL) para confirmar o editar respuestas. |
-| [agent_middleware.py](agent_middleware.py) | Usa Agent Framework con middleware de agente, chat y funciones para registro, temporización y bloqueo. |
-| [agent_mcp_remote.py](agent_mcp_remote.py) | Un agente que usa un servidor MCP remoto (Microsoft Learn) para búsqueda de documentación. |
-| [agent_mcp_local.py](agent_mcp_local.py) | Un agente conectado a un servidor MCP local (ej. para registro de gastos). |
-| [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a funciones con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
-| [workflow_basic.py](workflow_basic.py) | Usa Agent Framework para crear un agente basado en flujo de trabajo. |
+| [agent_basic.py](agent_basic.py) | Un agente informativo básico. |
+| [agent_tool.py](agent_tool.py) | Un agente con una sola herramienta de clima. |
+| [agent_tools.py](agent_tools.py) | Un agente planificador de fin de semana con múltiples herramientas. |
+| [agent_session.py](agent_session.py) | Sesiones en memoria para conversaciones multi-turno con memoria entre mensajes. |
+| [agent_history_redis.py](agent_history_redis.py) | Historial de chat persistente con Redis para conversación que sobrevive reinicios. |
+| [agent_supervisor.py](agent_supervisor.py) | Un supervisor que orquesta subagentes de actividades y recetas. |
+| [workflow_magenticone.py](workflow_magenticone.py) | Un workflow multi-agente MagenticOne. |
+| [workflow_hitl.py](workflow_hitl.py) | Human-in-the-loop (HITL) para agentes con herramientas con feedback humano. |
+| [agent_middleware.py](agent_middleware.py) | Middleware de agente, chat y funciones para logging, timing y bloqueo. |
+| [agent_knowledge_sqlite.py](agent_knowledge_sqlite.py) | Recuperación de conocimiento (RAG) usando un proveedor de contexto personalizado con SQLite FTS5. |
+| [agent_knowledge_postgres.py](agent_knowledge_postgres.py) | Recuperación de conocimiento (RAG) con búsqueda híbrida en PostgreSQL (pgvector + texto completo) usando Reciprocal Rank Fusion. |
+| [agent_mcp_remote.py](agent_mcp_remote.py) | Un agente usando un servidor MCP remoto (Microsoft Learn) para búsqueda de documentación. |
+| [agent_mcp_local.py](agent_mcp_local.py) | Un agente conectado a un servidor MCP local (p. ej. para registro de gastos). |
+| [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a herramientas con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
+| [workflow_basic.py](workflow_basic.py) | Un agente basado en workflows. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation.py](agent_evaluation.py) | Evalúa un agente planificador de viajes usando evaluadores de [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Opcionalmente configura `AZURE_AI_PROJECT` en `.env` para registrar resultados en [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
+| [agent_redteam.py](agent_redteam.py) | Prueba de red team a un agente asesor financiero usando [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/red-teaming-agent) para evaluar su resiliencia ante ataques adversariales en categorías de riesgo (Violence, HateUnfairness, Sexual, SelfHarm). Requiere `AZURE_AI_PROJECT` en `.env`. |
 
 ## Usar el Aspire Dashboard para telemetría
 
@@ -184,9 +203,9 @@ El ejemplo [agent_otel_aspire.py](agent_otel_aspire.py) puede exportar trazas, m
 
 ### En GitHub Codespaces / Dev Containers
 
-El Aspire Dashboard se ejecuta automaticamente como un servicio junto al dev container. No necesitas configuracion adicional.
+El Aspire Dashboard se ejecuta automáticamente como un servicio junto al dev container. No necesitas configuración adicional.
 
-1. La variable de entorno `OTEL_EXPORTER_OTLP_ENDPOINT` ya esta configurada por el dev container.
+1. La variable de entorno `OTEL_EXPORTER_OTLP_ENDPOINT` ya está configurada por el dev container.
 
 2. Ejecuta el ejemplo:
 
@@ -227,13 +246,13 @@ Si ejecutas localmente sin Dev Containers, necesitas iniciar el Aspire Dashboard
 
 4. Abre el dashboard en <http://localhost:18888> y explora.
 
-5. Cuando termines, deten el dashboard:
+5. Cuando termines, detén el dashboard:
 
     ```sh
     docker stop aspire-dashboard
     ```
 
-Para la guia completa de Python + Aspire, consulta [Usar el Aspire Dashboard con apps de Python](https://aspire.dev/dashboard/standalone-for-python/).
+Para la guía completa de Python + Aspire, consulta [Usar el Aspire Dashboard con apps de Python](https://aspire.dev/dashboard/standalone-for-python/).
 
 ## Exportar telemetría a Azure Application Insights
 

@@ -11,12 +11,11 @@ from agent_framework import (
     AgentExecutorResponse,
     AgentResponse,
     AgentRunUpdateEvent,
-    ChatAgent,
-    ChatMessage,
+    Agent,
+    Message,
     Content,
     Executor,
     RequestInfoEvent,
-    Role,
     WorkflowBuilder,
     WorkflowContext,
     WorkflowOutputEvent,
@@ -76,8 +75,7 @@ Requisitos previos:
 """
 
 
-# NOTA: approval_mode="never_require" es por brevedad del ejemplo.
-@tool(approval_mode="never_require")
+@tool
 def fetch_product_brief(
     product_name: Annotated[str, Field(description="Product name to look up.")],
 ) -> str:
@@ -101,8 +99,7 @@ def fetch_product_brief(
     return briefs.get(product_name.lower(), f"No hay resumen almacenado para '{product_name}'.")
 
 
-# NOTA: approval_mode="never_require" es por brevedad del ejemplo.
-@tool(approval_mode="never_require")
+@tool
 def get_brand_voice_profile(
     voice_name: Annotated[str, Field(description="Brand or campaign voice to emulate.")],
 ) -> str:
@@ -130,7 +127,7 @@ class DraftFeedbackRequest:
 
     prompt: str = ""
     draft_text: str = ""
-    conversation: list[ChatMessage] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
+    conversation: list[Message] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
 
 
 class Coordinator(Executor):
@@ -156,7 +153,7 @@ class Coordinator(Executor):
         # Respuesta del agente escritor; solicitar retroalimentación humana.
         # Preservar la conversación completa para que el editor final
         # pueda ver los rastros de herramientas y el prompt inicial.
-        conversation: list[ChatMessage]
+        conversation: list[Message]
         if draft.full_conversation is not None:
             conversation = list(draft.full_conversation)
         else:
@@ -188,7 +185,7 @@ class Coordinator(Executor):
             await ctx.send_message(
                 AgentExecutorRequest(
                     messages=original_request.conversation
-                    + [ChatMessage(Role.USER, text="La versión preliminar está aprobada tal como está.")],
+                    + [Message(role="user", text="La versión preliminar está aprobada tal como está.")],
                     should_respond=True,
                 ),
                 target_id=self.final_editor_id,
@@ -196,23 +193,23 @@ class Coordinator(Executor):
             return
 
         # El humano proporcionó retroalimentación; indicar al escritor que revise.
-        conversation: list[ChatMessage] = list(original_request.conversation)
+        conversation: list[Message] = list(original_request.conversation)
         instruction = (
             "Un revisor humano compartió la siguiente guía:\n"
             f"{note or 'No se proporcionó guía específica.'}\n\n"
             "Reescribe la versión preliminar del mensaje anterior del asistente en una versión final pulida. "
             "Mantén la respuesta en menos de 120 palabras y refleja los ajustes de tono solicitados."
         )
-        conversation.append(ChatMessage(Role.USER, text=instruction))
+        conversation.append(Message(role="user", text=instruction))
         await ctx.send_message(
             AgentExecutorRequest(messages=conversation, should_respond=True), target_id=self.writer_id
         )
 
 
-def create_writer_agent() -> ChatAgent:
+def create_writer_agent() -> Agent:
     """Crea un agente escritor con herramientas."""
-    return ChatAgent(
-        chat_client=client,
+    return Agent(
+        client=client,
         name="writer_agent",
         instructions=(
             "Eres un escritor de marketing. "
@@ -227,10 +224,10 @@ def create_writer_agent() -> ChatAgent:
     )
 
 
-def create_final_editor_agent() -> ChatAgent:
+def create_final_editor_agent() -> Agent:
     """Crea un agente editor final."""
-    return ChatAgent(
-        chat_client=client,
+    return Agent(
+        client=client,
         name="final_editor_agent",
         instructions=(
             "Eres un editor que pule el texto de marketing después de la aprobación humana. "

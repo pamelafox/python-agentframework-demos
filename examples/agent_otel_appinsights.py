@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timezone
 from typing import Annotated
 
-from agent_framework import ChatAgent
+from agent_framework import Agent, tool
 from agent_framework.observability import create_resource, enable_instrumentation
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -55,6 +55,7 @@ else:
     )
 
 
+@tool
 def get_weather(
     city: Annotated[str, Field(description="City name, spelled out fully")],
 ) -> dict:
@@ -69,6 +70,7 @@ def get_weather(
     return random.choice(weather_options)
 
 
+@tool
 def get_current_time(
     timezone_name: Annotated[str, Field(description="Timezone name, e.g. 'US/Eastern', 'Asia/Tokyo', 'UTC'")],
 ) -> str:
@@ -78,9 +80,9 @@ def get_current_time(
     return f"The current time in {timezone_name} is approximately {now.strftime('%Y-%m-%d %H:%M:%S')} UTC"
 
 
-agent = ChatAgent(
+agent = Agent(
     name="weather-time-agent",
-    chat_client=client,
+    client=client,
     instructions="You are a helpful assistant that can look up weather and time information.",
     tools=[get_weather, get_current_time],
 )

@@ -2,10 +2,9 @@ import asyncio
 import json
 import logging
 import os
-import tempfile
 from typing import Annotated
 
-from agent_framework import ChatAgent, tool
+from agent_framework import Agent, tool
 from agent_framework.openai import OpenAIChatClient
 from azure.ai.evaluation import (
     AzureOpenAIModelConfiguration,
@@ -14,7 +13,6 @@ from azure.ai.evaluation import (
     ResponseCompletenessEvaluator,
     TaskAdherenceEvaluator,
     ToolCallAccuracyEvaluator,
-    evaluate,
 )
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
@@ -67,10 +65,6 @@ else:
         api_key=os.environ["OPENAI_API_KEY"],
         model=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
     )
-
-# Optional: Set AZURE_AI_PROJECT in .env to log results to Azure AI Foundry.
-# Example: https://your-account.services.ai.azure.com/api/projects/your-project
-AZURE_AI_PROJECT = os.getenv("AZURE_AI_PROJECT")
 
 
 @tool
@@ -183,9 +177,8 @@ AGENT_INSTRUCTIONS = (
     "within the user's budget. Include weather information to help with packing."
 )
 
-agent = ChatAgent(
-    name="travel-planner",
-    chat_client=client,
+agent = Agent(
+    client=client,
     instructions=AGENT_INSTRUCTIONS,
     tools=tools,
 )
@@ -269,7 +262,7 @@ def display_evaluation_results(results: dict[str, dict]) -> None:
 
 
 async def main():
-    query = "Plan a 3-day trip from New York to Tokyo next month on a $2000 budget. I like hiking and museums."
+    query = "Plan a 3-day trip from New York (JFK) to Tokyo, departing March 15 and returning March 18, 2026. My budget is $2000 total. I like hiking and museums. Please search for flights, hotels under $150/night, check the weather, and suggest activities."
 
     logger.info("Running travel planner agent...")
     response = await agent.run(query)
@@ -298,94 +291,35 @@ async def main():
         "ToolCallAccuracy": "tool_call_accuracy",
     }
 
-    if AZURE_AI_PROJECT:
-        logger.info(f"Logging evaluation results to Azure AI project: {AZURE_AI_PROJECT}")
+    intent_evaluator = IntentResolutionEvaluator(**evaluator_kwargs)
+    completeness_evaluator = ResponseCompletenessEvaluator(**evaluator_kwargs)
+    adherence_evaluator = TaskAdherenceEvaluator(**evaluator_kwargs)
+    tool_accuracy_evaluator = ToolCallAccuracyEvaluator(**evaluator_kwargs)
 
-        eval_data_row = {
-            "query": eval_query,
-            "response": eval_response,
-            "response_text": response.text,
-            "ground_truth": ground_truth,
-            "tool_definitions": tool_definitions,
+    intent_result = intent_evaluator(query=eval_query, response=eval_response, tool_definitions=tool_definitions)
+    completeness_result = completeness_evaluator(response=response.text, ground_truth=ground_truth)
+    adherence_result = adherence_evaluator(
+        query=eval_query, response=eval_response, tool_definitions=tool_definitions
+    )
+    tool_accuracy_result = tool_accuracy_evaluator(
+        query=eval_query, response=eval_response, tool_definitions=tool_definitions
+    )
+
+    evaluation_results = {}
+    for name, result in [
+        ("IntentResolution", intent_result),
+        ("ResponseCompleteness", completeness_result),
+        ("TaskAdherence", adherence_result),
+        ("ToolCallAccuracy", tool_accuracy_result),
+    ]:
+        key = result_keys[name]
+        evaluation_results[name] = {
+            "score": result.get(key, "N/A"),
+            "result": result.get(f"{key}_result", "N/A"),
+            "reason": result.get(f"{key}_reason", result.get("error_message", "N/A")),
         }
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
-            f.write(json.dumps(eval_data_row) + "\n")
-            eval_data_file = f.name
-
-        try:
-            eval_result = evaluate(
-                data=eval_data_file,
-                evaluation_name="travel-planner-agent-eval",
-                evaluators={
-                    "intent_resolution": IntentResolutionEvaluator(**evaluator_kwargs),
-                    "response_completeness": ResponseCompletenessEvaluator(**evaluator_kwargs),
-                    "task_adherence": TaskAdherenceEvaluator(**evaluator_kwargs),
-                    "tool_call_accuracy": ToolCallAccuracyEvaluator(**evaluator_kwargs),
-                },
-                # ResponseCompletenessEvaluator expects a plain text response, not a message list,
-                # so we override its column mapping to use response_text and ground_truth.
-                # Other evaluators auto-map correctly since data keys match param names.
-                evaluator_config={
-                    "response_completeness": {
-                        "column_mapping": {
-                            "response": "${data.response_text}",
-                            "ground_truth": "${data.ground_truth}",
-                        }
-                    },
-                },
-                azure_ai_project=AZURE_AI_PROJECT,
-            )
-
-            # Parse results from the batch evaluate() output
-            evaluation_results = {}
-            rows = eval_result.get("rows", [])
-            row = rows[0] if rows else {}
-
-            for display_name, key in result_keys.items():
-                evaluation_results[display_name] = {
-                    "score": row.get(f"outputs.{key}.{key}", "N/A"),
-                    "result": row.get(f"outputs.{key}.{key}_result", "N/A"),
-                    "reason": row.get(f"outputs.{key}.{key}_reason", "N/A"),
-                }
-
-            display_evaluation_results(evaluation_results)
-
-            studio_url = eval_result.get("studio_url")
-            if studio_url:
-                print(f"\n[bold blue]View results in Azure AI Foundry:[/bold blue] {studio_url}")
-        finally:
-            os.unlink(eval_data_file)
-    else:
-        intent_evaluator = IntentResolutionEvaluator(**evaluator_kwargs)
-        completeness_evaluator = ResponseCompletenessEvaluator(**evaluator_kwargs)
-        adherence_evaluator = TaskAdherenceEvaluator(**evaluator_kwargs)
-        tool_accuracy_evaluator = ToolCallAccuracyEvaluator(**evaluator_kwargs)
-
-        intent_result = intent_evaluator(query=eval_query, response=eval_response, tool_definitions=tool_definitions)
-        completeness_result = completeness_evaluator(response=response.text, ground_truth=ground_truth)
-        adherence_result = adherence_evaluator(
-            query=eval_query, response=eval_response, tool_definitions=tool_definitions
-        )
-        tool_accuracy_result = tool_accuracy_evaluator(
-            query=eval_query, response=eval_response, tool_definitions=tool_definitions
-        )
-
-        evaluation_results = {}
-        for name, result in [
-            ("IntentResolution", intent_result),
-            ("ResponseCompleteness", completeness_result),
-            ("TaskAdherence", adherence_result),
-            ("ToolCallAccuracy", tool_accuracy_result),
-        ]:
-            key = result_keys[name]
-            evaluation_results[name] = {
-                "score": result.get(key, "N/A"),
-                "result": result.get(f"{key}_result", "N/A"),
-                "reason": result.get(f"{key}_reason", result.get("error_message", "N/A")),
-            }
-
-        display_evaluation_results(evaluation_results)
+    display_evaluation_results(evaluation_results)
 
     if async_credential:
         await async_credential.close()

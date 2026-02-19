@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timezone
 from typing import Annotated
 
-from agent_framework import ChatAgent
+from agent_framework import Agent, tool
 from agent_framework.observability import configure_otel_providers
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -20,18 +20,8 @@ logging.basicConfig(level=logging.WARNING, handlers=[handler], force=True, forma
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-# Configura la exportación de OpenTelemetry al Aspire Dashboard (si el endpoint está configurado)
-otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-if otlp_endpoint:
-    os.environ.setdefault("OTEL_EXPORTER_OTLP_PROTOCOL", "grpc")
-    os.environ.setdefault("OTEL_SERVICE_NAME", "agent-framework-demo")
-    configure_otel_providers(enable_sensitive_data=True)
-    logger.info(f"Exportación OpenTelemetry habilitada — enviando a {otlp_endpoint}")
-else:
-    logger.info(
-        "Configura OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 en .env"
-        " para exportar telemetría al Aspire Dashboard"
-    )
+# Configura OpenTelemetry (lee OTEL_EXPORTER_OTLP_* y ENABLE_CONSOLE_EXPORTERS del entorno)
+configure_otel_providers(enable_sensitive_data=True)
 
 # Configura el cliente para usar Azure OpenAI, GitHub Models u OpenAI
 load_dotenv(override=True)
@@ -58,6 +48,7 @@ else:
     )
 
 
+@tool
 def get_weather(
     city: Annotated[str, Field(description="City name, spelled out fully")],
 ) -> dict:
@@ -72,6 +63,7 @@ def get_weather(
     return random.choice(weather_options)
 
 
+@tool
 def get_current_time(
     timezone_name: Annotated[
         str, Field(description="Timezone name, e.g. 'US/Eastern', 'America/Mexico_City', 'UTC'")
@@ -83,9 +75,9 @@ def get_current_time(
     return f"La hora actual en {timezone_name} es aproximadamente {now.strftime('%Y-%m-%d %H:%M:%S')} UTC"
 
 
-agent = ChatAgent(
+agent = Agent(
     name="weather-time-agent",
-    chat_client=client,
+    client=client,
     instructions="Eres un asistente útil que puede consultar información del clima y la hora.",
     tools=[get_weather, get_current_time],
 )

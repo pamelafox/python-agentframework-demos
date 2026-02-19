@@ -11,12 +11,11 @@ from agent_framework import (
     AgentExecutorResponse,
     AgentResponse,
     AgentRunUpdateEvent,
-    ChatAgent,
-    ChatMessage,
+    Agent,
+    Message,
     Content,
     Executor,
     RequestInfoEvent,
-    Role,
     WorkflowBuilder,
     WorkflowContext,
     WorkflowOutputEvent,
@@ -76,8 +75,7 @@ Prerequisites:
 """
 
 
-# NOTE: approval_mode="never_require" is for sample brevity.
-@tool(approval_mode="never_require")
+@tool
 def fetch_product_brief(
     product_name: Annotated[str, Field(description="Product name to look up.")],
 ) -> str:
@@ -94,8 +92,7 @@ def fetch_product_brief(
     return briefs.get(product_name.lower(), f"No stored brief for '{product_name}'.")
 
 
-# NOTE: approval_mode="never_require" is for sample brevity.
-@tool(approval_mode="never_require")
+@tool
 def get_brand_voice_profile(
     voice_name: Annotated[str, Field(description="Brand or campaign voice to emulate.")],
 ) -> str:
@@ -117,7 +114,7 @@ class DraftFeedbackRequest:
 
     prompt: str = ""
     draft_text: str = ""
-    conversation: list[ChatMessage] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
+    conversation: list[Message] = field(default_factory=list)  # type: ignore[reportUnknownVariableType]
 
 
 class Coordinator(Executor):
@@ -143,7 +140,7 @@ class Coordinator(Executor):
         # Writer agent response; request human feedback.
         # Preserve the full conversation so the final editor
         # can see tool traces and the initial prompt.
-        conversation: list[ChatMessage]
+        conversation: list[Message]
         if draft.full_conversation is not None:
             conversation = list(draft.full_conversation)
         else:
@@ -175,7 +172,7 @@ class Coordinator(Executor):
             await ctx.send_message(
                 AgentExecutorRequest(
                     messages=original_request.conversation
-                    + [ChatMessage(Role.USER, text="The draft is approved as-is.")],
+                    + [Message(role="user", text="The draft is approved as-is.")],
                     should_respond=True,
                 ),
                 target_id=self.final_editor_id,
@@ -183,23 +180,23 @@ class Coordinator(Executor):
             return
 
         # Human provided feedback; prompt the writer to revise.
-        conversation: list[ChatMessage] = list(original_request.conversation)
+        conversation: list[Message] = list(original_request.conversation)
         instruction = (
             "A human reviewer shared the following guidance:\n"
             f"{note or 'No specific guidance provided.'}\n\n"
             "Rewrite the draft from the previous assistant message into a polished final version. "
             "Keep the response under 120 words and reflect any requested tone adjustments."
         )
-        conversation.append(ChatMessage(Role.USER, text=instruction))
+        conversation.append(Message(role="user", text=instruction))
         await ctx.send_message(
             AgentExecutorRequest(messages=conversation, should_respond=True), target_id=self.writer_id
         )
 
 
-def create_writer_agent() -> ChatAgent:
+def create_writer_agent() -> Agent:
     """Creates a writer agent with tools."""
-    return ChatAgent(
-        chat_client=client,
+    return Agent(
+        client=client,
         name="writer_agent",
         instructions=(
             "You are a marketing writer. Call the available tools before drafting copy so you are precise. "
@@ -211,10 +208,10 @@ def create_writer_agent() -> ChatAgent:
     )
 
 
-def create_final_editor_agent() -> ChatAgent:
+def create_final_editor_agent() -> Agent:
     """Creates a final editor agent."""
-    return ChatAgent(
-        chat_client=client,
+    return Agent(
+        client=client,
         name="final_editor_agent",
         instructions=(
             "You are an editor who polishes marketing copy after human approval. "

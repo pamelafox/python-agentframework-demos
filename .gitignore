@@ -147,3 +147,8 @@ node_modules
 static/
 
 .DS_Store
+*.sqlite3
+
+# Red team scan results (may contain sensitive/graphic content)
+redteam_results.json/
+.scan_*/

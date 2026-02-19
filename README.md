@@ -58,6 +58,8 @@ A related option is VS Code Dev Containers, which will open the project in your 
 3. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window.
 4. Continue with the steps to run the examples
 
+The dev container includes a Redis server, which is used by the `agent_history_redis.py` example.
+
 ### Local environment
 
 1. Make sure the following tools are installed:
@@ -77,6 +79,18 @@ A related option is VS Code Dev Containers, which will open the project in your 
 
     ```shell
     uv sync
+    ```
+
+4. *Optional:* To run the `agent_history_redis.py` example, you need a Redis server running locally:
+
+    ```shell
+    docker run -d -p 6379:6379 redis:7-alpine
+    ```
+
+5. *Optional:* To run the PostgreSQL examples (`agent_knowledge_postgres.py`, `agent_knowledge_pg.py`, `agent_knowledge_pg_rewrite.py`), you need PostgreSQL with pgvector running locally:
+
+    ```shell
+    docker run -d -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=LocalPasswordOnly pgvector/pgvector:pg17
     ```
 
 ## Configuring model providers
@@ -125,6 +139,12 @@ This project includes infrastructure as code (IaC) to provision Azure OpenAI dep
     azd auth login --use-device-code
     ```
 
+    If you are using a tenant besides the default tenant, you may need to also login with Azure CLI to that tenant:
+
+    ```shell
+    az login --tenant your-tenant-id
+    ```
+
 3. Provision the OpenAI account:
 
     ```shell
@@ -165,10 +185,14 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_basic.py](examples/agent_basic.py) | A basic informational agent. |
 | [agent_tool.py](examples/agent_tool.py) | An agent with a single weather tool. |
 | [agent_tools.py](examples/agent_tools.py) | A weekend planning agent with multiple tools. |
+| [agent_session.py](examples/agent_session.py) | In-memory sessions for multi-turn conversations with memory across messages. |
+| [agent_history_redis.py](examples/agent_history_redis.py) | Persistent chat history with Redis for conversation history that survives restarts. |
 | [agent_supervisor.py](examples/agent_supervisor.py) | A supervisor orchestrating activity and recipe sub-agents. |
 | [workflow_magenticone.py](examples/workflow_magenticone.py) | A MagenticOne multi-agent workflow. |
 | [workflow_hitl.py](examples/workflow_hitl.py) | Human-in-the-loop (HITL) for tool-enabled agents with human feedback. |
 | [agent_middleware.py](examples/agent_middleware.py) | Agent, chat, and function middleware for logging, timing, and blocking. |
+| [agent_knowledge_sqlite.py](examples/agent_knowledge_sqlite.py) | Knowledge retrieval (RAG) using a custom context provider with SQLite FTS5. |
+| [agent_knowledge_postgres.py](examples/agent_knowledge_postgres.py) | Knowledge retrieval (RAG) with PostgreSQL hybrid search (pgvector + full-text) using Reciprocal Rank Fusion. |
 | [agent_mcp_remote.py](examples/agent_mcp_remote.py) | An agent using a remote MCP server (Microsoft Learn) for documentation search. |
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
@@ -176,6 +200,7 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
 | [agent_evaluation.py](examples/agent_evaluation.py) | Evaluate a travel planner agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) agent evaluators (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Optionally set `AZURE_AI_PROJECT` in `.env` to log results to [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
+| [agent_redteam.py](examples/agent_redteam.py) | Red-team a financial advisor agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/red-teaming-agent) to test resilience against adversarial attacks across risk categories (Violence, HateUnfairness, Sexual, SelfHarm). Requires `AZURE_AI_PROJECT` in `.env`. |
 
 ## Using the Aspire Dashboard for telemetry
 
@@ -190,7 +215,7 @@ The Aspire Dashboard runs automatically as a service alongside the dev container
 2. Run the example:
 
     ```sh
-    uv run agent_otel_aspire.py
+    uv run examples/agent_otel_aspire.py
     ```
 
 3. Open the dashboard at <http://localhost:18888> and explore:

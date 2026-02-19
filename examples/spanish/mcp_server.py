@@ -16,47 +16,47 @@ from typing import Annotated
 from fastmcp import FastMCP
 
 logging.basicConfig(level=logging.WARNING, format="%(asctime)s - %(message)s")
-logger = logging.getLogger("ExpensesMCP")
+logger = logging.getLogger("GastosMCP")
 logger.setLevel(logging.INFO)
 
 SCRIPT_DIR = Path(__file__).parent
 EXPENSES_FILE = SCRIPT_DIR / "expenses.csv"
 
-mcp = FastMCP("Expenses Tracker")
+mcp = FastMCP("Rastreador de Gastos")
 
 
-class PaymentMethod(Enum):
-    """Métodos de pago aceptados para gastos."""
+class MetodoPago(Enum):
+    """Métodos de pago que puedes usar para gastos."""
 
     AMEX = "amex"
     VISA = "visa"
-    CASH = "cash"
+    EFECTIVO = "efectivo"
 
 
-class Category(Enum):
-    """Categorías de gastos para clasificación."""
+class Categoria(Enum):
+    """Categorías de gastos para clasificar."""
 
-    FOOD = "comida"
-    TRANSPORT = "transporte"
-    ENTERTAINMENT = "entretenimiento"
-    SHOPPING = "compras"
-    GADGET = "tecnologia"
-    OTHER = "otro"
+    COMIDA = "comida"
+    TRANSPORTE = "transporte"
+    ENTRETENIMIENTO = "entretenimiento"
+    COMPRAS = "compras"
+    TECNOLOGIA = "tecnologia"
+    OTRO = "otro"
 
 
 @mcp.tool
-async def add_expense(
-    expense_date: Annotated[date, "Expense date in YYYY-MM-DD format"],
-    amount: Annotated[float, "Positive numeric expense amount"],
-    category: Annotated[Category, "Category label"],
-    description: Annotated[str, "Human-readable expense description"],
-    payment_method: Annotated[PaymentMethod, "Payment method used"],
+async def agregar_gasto(
+    fecha_gasto: Annotated[date, "Fecha del gasto en formato AAAA-MM-DD"],
+    amount: Annotated[float, "Monto numérico positivo del gasto"],
+    category: Annotated[Categoria, "Etiqueta de categoría"],
+    description: Annotated[str, "Descripción legible del gasto"],
+    payment_method: Annotated[MetodoPago, "Método de pago utilizado"],
 ) -> str:
     """Agrega un nuevo gasto al archivo expenses.csv."""
     if amount <= 0:
         return "Error: El monto debe ser positivo"
 
-    date_iso = expense_date.isoformat()
+    date_iso = fecha_gasto.isoformat()
     logger.info(f"Agregando gasto: ${amount} por {description} el {date_iso}")
 
     try:
@@ -76,7 +76,7 @@ async def add_expense(
 
 
 @mcp.resource("resource://expenses")
-async def get_expenses_data() -> str:
+async def obtener_datos_gastos() -> str:
     """Obtiene los datos de gastos desde el archivo CSV."""
     logger.info("Datos de gastos consultados")
 
