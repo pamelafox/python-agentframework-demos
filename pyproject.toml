@@ -19,7 +19,7 @@ dependencies = [
     "pgvector",
     "azure-ai-evaluation[redteam]>=1.15.0",
     "agent-framework-core @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/core",
-    "agent-framework-devui @ git+https://github.com/microsoft/agent-framework.git@main#subdirectory=python/packages/devui",
+    "agent-framework-devui @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/devui",
     "agent-framework-redis @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/redis",
     "agent-framework-mem0 @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/mem0",
     "agent-framework-azure-ai-search @ git+https://github.com/microsoft/agent-framework.git@fc9c81b0b11170bdab8fa2d42bb96981e65fd270#subdirectory=python/packages/azure-ai-search",
