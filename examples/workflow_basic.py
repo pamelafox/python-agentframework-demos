@@ -49,7 +49,7 @@ def needs_editing(message: Any) -> bool:
     if not isinstance(message, AgentExecutorResponse):
         return False
     try:
-        review = ReviewResult.model_validate_json(message.agent_run_response.text)
+        review = ReviewResult.model_validate_json(message.agent_response.text)
         return review.score < 80
     except Exception:
         return False
@@ -61,7 +61,7 @@ def is_approved(message: Any) -> bool:
     if not isinstance(message, AgentExecutorResponse):
         return True
     try:
-        review = ReviewResult.model_validate_json(message.agent_run_response.text)
+        review = ReviewResult.model_validate_json(message.agent_response.text)
         return review.score >= 80
     except Exception:
         return True

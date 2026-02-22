@@ -49,7 +49,7 @@ def necesita_edicion(message: Any) -> bool:
     if not isinstance(message, AgentExecutorResponse):
         return False
     try:
-        revision = ResultadoRevision.model_validate_json(message.agent_run_response.text)
+        revision = ResultadoRevision.model_validate_json(message.agent_response.text)
         return revision.puntaje < 80
     except Exception:
         return False
@@ -61,7 +61,7 @@ def esta_aprobado(message: Any) -> bool:
     if not isinstance(message, AgentExecutorResponse):
         return True
     try:
-        revision = ResultadoRevision.model_validate_json(message.agent_run_response.text)
+        revision = ResultadoRevision.model_validate_json(message.agent_response.text)
         return revision.puntaje >= 80
     except Exception:
         return True
