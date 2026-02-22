@@ -80,7 +80,7 @@ workflow = WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).bui
 
 
 async def main():
-    prompt = "Escribe un artículo corto sobre los beneficios de la energía renovable."
+    prompt = "Escribe una publicación de LinkedIn sobre tres formas prácticas en que los agentes de IA pueden mejorar los flujos de soporte al cliente."
     logger.info("Prompt: %s", prompt)
     events = await workflow.run(prompt)
     outputs = events.get_outputs()

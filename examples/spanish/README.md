@@ -209,7 +209,7 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [workflow_conditional_state.py](workflow_conditional_state.py) | Un workflow condicional con estado y bucle iterativo: guarda el último borrador en el estado del workflow y publica desde ese estado tras la aprobación. |
 | [workflow_conditional_state_isolated.py](workflow_conditional_state_isolated.py) | El workflow condicional con estado usando una fábrica `create_workflow(...)` para crear agentes/workflow nuevos por tarea y así aislar estado e hilos de agente. |
 | [workflow_switch_case.py](workflow_switch_case.py) | Un workflow con enrutamiento switch-case: un agente Clasificador usa salidas estructuradas para categorizar un mensaje y enrutarlo al manejador especializado. |
-| [workflow_basic.py](workflow_basic.py) | Un agente basado en workflows. |
+| [workflow_converge.py](workflow_converge.py) | Un workflow con rama y convergencia: Revisor enruta a Publicador o Editor y luego converge antes del resumen final. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation_generate.py](agent_evaluation_generate.py) | Genera datos sintéticos de evaluación para el agente planificador de viajes. |

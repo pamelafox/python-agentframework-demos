@@ -77,7 +77,7 @@ workflow = WorkflowBuilder(name="EscritorRevisor", start_executor=writer).add_ed
 
 
 async def main():
-    prompt = "Escribe un artículo corto sobre los beneficios de la energía renovable."
+    prompt = "Escribe una publicación de LinkedIn sobre lecciones aprendidas al implementar copilotos de IA para productividad de desarrolladores."
     print(f"💬 Solicitud: {prompt}\n")
 
     async for event in workflow.run(prompt, stream=True):
