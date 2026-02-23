@@ -27,7 +27,7 @@ from agent_framework import Agent, AgentExecutorResponse, WorkflowBuilder, Workf
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 from typing_extensions import Never
 
 load_dotenv(override=True)
@@ -67,10 +67,7 @@ def parse_review_decision(message: Any) -> ReviewDecision | None:
     if not isinstance(message, AgentExecutorResponse):
         return None
 
-    try:
-        return ReviewDecision.model_validate_json(message.agent_response.text)
-    except ValidationError:
-        return None
+    return message.agent_response.value
 
 
 # Funciones de condición — reciben el mensaje del ejecutor anterior.
@@ -109,7 +106,7 @@ def create_workflow(model_client: OpenAIChatClient):
             "Define decision=REVISION_NEEDED si necesita mejoras.\n"
             "En feedback, explica brevemente tu razonamiento y da cambios accionables cuando aplique."
         ),
-        response_format=ReviewDecision,
+        default_options={"response_format": ReviewDecision},
     )
 
     editor = Agent(
