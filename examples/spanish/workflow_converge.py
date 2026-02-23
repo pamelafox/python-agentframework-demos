@@ -160,7 +160,7 @@ workflow = (
 
 
 async def main():
-    prompt = "Escribe una publicación de LinkedIn sobre las habilidades clave que líderes de producto necesitan para lanzar funciones con agentes de IA."
+    prompt = "Escribe una publicación de LinkedIn de un párrafo: \"El error de workflow de IA que casi todos los equipos cometen.\""
     print(f"Prompt: {prompt}\n")
 
     events = await workflow.run(prompt)

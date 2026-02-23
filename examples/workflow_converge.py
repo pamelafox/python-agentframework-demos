@@ -160,7 +160,7 @@ workflow = (
 
 
 async def main():
-    prompt = "Write a LinkedIn post about the key skills product managers need to ship AI-agent features effectively."
+    prompt = 'Write a one-paragraph LinkedIn post: "The AI workflow mistake almost every team makes."'
     print(f"Prompt: {prompt}\n")
 
     events = await workflow.run(prompt)

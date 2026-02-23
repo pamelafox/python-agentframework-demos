@@ -79,7 +79,7 @@ workflow = SequentialBuilder(participants=[writer, reviewer]).build()
 
 
 async def main():
-    prompt = "Write a LinkedIn post about how small teams can adopt AI agents responsibly in day-to-day operations."
+    prompt = 'Write a one-paragraph LinkedIn post: "The AI workflow mistake almost every team makes."'
     logger.info("Prompt: %s", prompt)
     events = await workflow.run(prompt)
     outputs = events.get_outputs()

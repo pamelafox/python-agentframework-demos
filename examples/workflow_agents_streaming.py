@@ -77,7 +77,7 @@ workflow = WorkflowBuilder(name="WriterReviewer", start_executor=writer).add_edg
 
 
 async def main():
-    prompt = "Write a LinkedIn post about lessons learned from deploying AI copilots for developer productivity."
+    prompt = 'Write a short LinkedIn post: "4 jobs AI agents are quietly reshaping this year."'
     print(f"💬 Prompt: {prompt}\n")
 
     async for event in workflow.run(prompt, stream=True):

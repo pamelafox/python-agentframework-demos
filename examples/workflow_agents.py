@@ -12,7 +12,6 @@ Run:
 """
 
 import asyncio
-import logging
 import os
 import sys
 
@@ -20,12 +19,6 @@ from agent_framework import Agent, WorkflowBuilder
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-from rich.logging import RichHandler
-
-log_handler = RichHandler(show_path=False, rich_tracebacks=True, show_level=False)
-logging.basicConfig(level=logging.WARNING, handlers=[log_handler], force=True, format="%(message)s")
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
@@ -80,12 +73,13 @@ workflow = WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).bui
 
 
 async def main():
-    prompt = "Write a LinkedIn post about three practical ways AI agents can improve customer support workflows."
-    logger.info("Prompt: %s", prompt)
+    prompt = 'Write a 2-sentence LinkedIn post: "Why your AI pilot looks good but fails in production."'
+    print(f"Prompt: {prompt}\n")
     events = await workflow.run(prompt)
-    outputs = events.get_outputs()
-    for output in outputs:
-        logger.info("[%s]\n%s", output.executor_id, output.agent_response.text)
+
+    for output in events.get_outputs():
+        print("===== Output =====")
+        print(output)
 
     if async_credential:
         await async_credential.close()
