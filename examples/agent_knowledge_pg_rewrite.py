@@ -80,7 +80,7 @@ elif API_HOST == "github":
     chat_client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
     embed_client = OpenAI(
         base_url="https://models.github.ai/inference",
@@ -89,7 +89,7 @@ elif API_HOST == "github":
     embed_model = "text-embedding-3-small"
 else:
     chat_client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
     embed_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     embed_model = "text-embedding-3-small"

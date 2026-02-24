@@ -37,7 +37,7 @@ elif API_HOST == "github":
 else:
     client = OpenAIChatClient(
         api_key=os.environ["OPENAI_API_KEY"],
-        model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
+        model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"),
     )
 
 
