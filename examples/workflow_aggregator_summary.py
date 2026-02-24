@@ -7,13 +7,15 @@ outputs into a concise executive brief.
 Aggregation technique: LLM synthesis (Agent as post-processor).
 
 Run:
-    uv run examples/workflow_aggregator_llm_summary.py
-    uv run examples/workflow_aggregator_llm_summary.py --devui  (opens DevUI at http://localhost:8101)
+    uv run examples/workflow_aggregator_summary.py
+    uv run examples/workflow_aggregator_summary.py --devui  (opens DevUI at http://localhost:8101)
 """
 
 import asyncio
 import os
 import sys
+
+from typing import Never
 
 from agent_framework import Agent, AgentExecutorResponse, Executor, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
@@ -53,20 +55,32 @@ class DispatchPrompt(Executor):
         await ctx.send_message(prompt)
 
 
-class FormatBranchResults(Executor):
-    """Fan-in collector that formats branch outputs into a single prompt."""
+class SummarizerExecutor(Executor):
+    """Fan-in aggregator that synthesizes expert outputs via a wrapped Agent."""
+
+    agent: Agent
+
+    def __init__(self, client: OpenAIChatClient, id: str = "Summarizer"):
+        super().__init__(id=id)
+        self.agent = Agent(
+            client=client,
+            name=id,
+            instructions=(
+                "You receive analysis from three domain experts (researcher, marketer, legal). "
+                "Synthesize their combined insights into a concise 3-sentence executive brief "
+                "that a CEO could read in 30 seconds. Do not repeat the raw analysis."
+            ),
+        )
 
     @handler
-    async def format(
-        self,
-        results: list[AgentExecutorResponse],
-        ctx: WorkflowContext[str],
-    ) -> None:
-        """Combine expert outputs into labeled sections for the summarizer."""
+    async def run(self, results: list[AgentExecutorResponse], ctx: WorkflowContext[Never, str]) -> None:
+        """Format branch outputs and feed them to the summarizer Agent."""
         sections = []
         for result in results:
             sections.append(f"[{result.executor_id}]\n{result.agent_response.text}")
-        await ctx.send_message("\n\n---\n\n".join(sections))
+        combined = "\n\n---\n\n".join(sections)
+        response = await self.agent.run(combined)
+        await ctx.yield_output(response.text)
 
 
 dispatcher = DispatchPrompt(id="dispatcher")
@@ -101,19 +115,9 @@ legal = Agent(
     ),
 )
 
-formatter = FormatBranchResults(id="formatter")
-
-# The summarizer Agent is the final node — it receives the formatted expert
-# outputs and synthesizes them into a concise executive brief.
-summarizer = Agent(
-    client=client,
-    name="Summarizer",
-    instructions=(
-        "You receive analysis from three domain experts (researcher, marketer, legal). "
-        "Synthesize their combined insights into a concise 3-sentence executive brief "
-        "that a CEO could read in 30 seconds. Do not repeat the raw analysis."
-    ),
-)
+# The summarizer Executor wraps an Agent to handle fan-in directly —
+# it formats the collected expert outputs and synthesizes a brief.
+summarizer = SummarizerExecutor(client=client)
 
 workflow = (
     WorkflowBuilder(
@@ -123,8 +127,7 @@ workflow = (
         output_executors=[summarizer],
     )
     .add_fan_out_edges(dispatcher, [researcher, marketer, legal])
-    .add_fan_in_edges([researcher, marketer, legal], formatter)
-    .add_edge(formatter, summarizer)
+    .add_fan_in_edges([researcher, marketer, legal], summarizer)
     .build()
 )
 

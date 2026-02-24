@@ -8,7 +8,6 @@ This plan is organized by proposed example file. For each file: (1) source examp
 3. `workflow_aggregator_structured.py` (Pydantic structured extraction)
 4. `workflow_aggregator_voting.py` (ensemble classification — majority vote)
 5. `workflow_aggregator_ranked.py` (generate N candidates — score & rank)
-6. `workflow_rag_ingest_parallel.py` (parallelized version of `workflow_rag_ingest.py`)
 7. `workflow_multi_selection_edge_group.py`
 8. `workflow_agents_concurrent.py`
 9. `workflow_concurrent_custom_aggregator.py`
@@ -62,16 +61,6 @@ This plan is organized by proposed example file. For each file: (1) source examp
   - Three creative agents each propose a marketing slogan for a product.
   - Aggregator (Agent or Executor) scores each proposal on criteria (creativity, memorability, brand fit) and yields a ranked list.
   - Teaching point: aggregation can be evaluative — the fan-in step judges via LLM, not just collects. Pattern applies to "generate N candidates, pick the best."
-
-### 6) `/workspace/examples/workflow_rag_ingest_parallel.py`
-- **Pull from**
-  - Local: `/workspace/examples/workflow_rag_ingest.py` (extract/chunk/embed pipeline and provider bootstrap)
-  - Upstream: `python/samples/03-workflows/parallelism/fan_out_fan_in_edges.py`, `python/samples/03-workflows/parallelism/map_reduce_and_visualization.py`
-  - Docs: Edges and parallelism concepts (`add_fan_out_edges`, `add_fan_in_edges`)
-- **Workflow accomplishes**
-  - Parallelizes embedding generation by fan-out over chunk batches and fan-in aggregation of embedded chunks.
-  - Keeps the same business goal as the current ingest demo (RAG ingestion) while changing the execution model.
-  - Provides a direct comparison against `workflow_agents_concurrent.py` to show domain-level parallelism (specialist perspectives) vs data-level parallelism (batch processing).
 
 ### 7) `/workspace/examples/workflow_multi_selection_edge_group.py`
 - **Pull from**
@@ -141,6 +130,17 @@ This plan is organized by proposed example file. For each file: (1) source examp
 - **Purpose**: contrasts language-level concurrency (`asyncio.gather`) with framework-level orchestration.
 - **Why appendix**: can distract from the core built-in workflow builder narrative for audiences new to async Python.
 
+### `/workspace/examples/workflow_rag_ingest_parallel.py`
+- **Pull from**
+  - Local: `/workspace/examples/workflow_rag_ingest.py` (extract/chunk/embed pipeline and provider bootstrap)
+  - Upstream: `python/samples/03-workflows/parallelism/fan_out_fan_in_edges.py`, `python/samples/03-workflows/parallelism/map_reduce_and_visualization.py`
+  - Docs: Edges and parallelism concepts (`add_fan_out_edges`, `add_fan_in_edges`)
+- **Workflow accomplishes**
+  - Parallelizes embedding generation by fan-out over chunk batches and fan-in aggregation of embedded chunks.
+  - Keeps the same business goal as the current ingest demo (RAG ingestion) while changing the execution model.
+  - Provides a direct comparison against `workflow_agents_concurrent.py` to show domain-level parallelism (specialist perspectives) vs data-level parallelism (batch processing).
+
+
 ## Scope Boundaries
 - Include only built-in workflow builder content for Session 5.
 - Exclude HITL-focused demos (next session).
@@ -150,7 +150,7 @@ This plan is organized by proposed example file. For each file: (1) source examp
 ## Verification Plan
 1. Smoke run each new script with standard provider env pattern used by current examples.
 2. Verify each script’s terminal output demonstrates the intended teaching point above.
-3. Run an explicit A/B comparison between `workflow_agents_concurrent.py` and `workflow_rag_ingest_parallel.py` and capture whether the audience sees a clear difference in orchestration pattern (specialist-agent parallelism vs data-pipeline parallelism).
 4. Rehearse in talk order with one fallback per segment (if a demo fails, which demo replaces it).
+
 ## Open Questions for MAF Team
 - **When is `output_executors` needed/recommended?** By default, `WorkflowBuilder` surfaces all outputs from all executors as events. If you only want outputs from certain executors, use `output_executors`. In our fan-out/fan-in demos, without `output_executors=[<aggregator>]`, the intermediate `Agent` nodes' `AgentResponse` objects leak into `get_outputs()` alongside the aggregator's output. We added `output_executors` to every fan-out/fan-in demo. Worth a slide callout — possibly on the same slide as the aggregation patterns table.
