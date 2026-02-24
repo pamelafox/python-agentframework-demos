@@ -46,13 +46,13 @@ elif API_HOST == "github":
         type="openai",
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model="openai/gpt-5-mini",
+        model="openai/gpt-4.1-mini",
     )
 else:
     model_config = OpenAIModelConfiguration(
         type="openai",
         api_key=os.environ["OPENAI_API_KEY"],
-        model=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
+        model=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"),
     )
 
 # Optional: Set AZURE_AI_PROJECT in .env to log results to Azure AI Foundry.
