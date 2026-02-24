@@ -188,15 +188,12 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_session.py](examples/agent_session.py) | In-memory sessions for multi-turn conversations with memory across messages. |
 | [agent_history_redis.py](examples/agent_history_redis.py) | Persistent chat history with Redis for conversation history that survives restarts. |
 | [agent_supervisor.py](examples/agent_supervisor.py) | A supervisor orchestrating activity and recipe sub-agents. |
-| [workflow_magenticone.py](examples/workflow_magenticone.py) | A MagenticOne multi-agent workflow. |
-| [workflow_hitl.py](examples/workflow_hitl.py) | Human-in-the-loop (HITL) for tool-enabled agents with human feedback. |
 | [agent_middleware.py](examples/agent_middleware.py) | Agent, chat, and function middleware for logging, timing, and blocking. |
 | [agent_knowledge_sqlite.py](examples/agent_knowledge_sqlite.py) | Knowledge retrieval (RAG) using a custom context provider with SQLite FTS5. |
 | [agent_knowledge_postgres.py](examples/agent_knowledge_postgres.py) | Knowledge retrieval (RAG) with PostgreSQL hybrid search (pgvector + full-text) using Reciprocal Rank Fusion. |
 | [agent_mcp_remote.py](examples/agent_mcp_remote.py) | An agent using a remote MCP server (Microsoft Learn) for documentation search. |
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
-| [workflow_basic.py](examples/workflow_basic.py) | A workflow-based agent. |
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
 | [agent_evaluation.py](examples/agent_evaluation.py) | Evaluate a travel planner agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) agent evaluators (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Optionally set `AZURE_AI_PROJECT` in `.env` to log results to [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
