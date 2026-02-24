@@ -183,15 +183,12 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [agent_session.py](agent_session.py) | Sesiones en memoria para conversaciones multi-turno con memoria entre mensajes. |
 | [agent_history_redis.py](agent_history_redis.py) | Historial de chat persistente con Redis para conversación que sobrevive reinicios. |
 | [agent_supervisor.py](agent_supervisor.py) | Un supervisor que orquesta subagentes de actividades y recetas. |
-| [workflow_magenticone.py](workflow_magenticone.py) | Un workflow multi-agente MagenticOne. |
-| [workflow_hitl.py](workflow_hitl.py) | Human-in-the-loop (HITL) para agentes con herramientas con feedback humano. |
 | [agent_middleware.py](agent_middleware.py) | Middleware de agente, chat y funciones para logging, timing y bloqueo. |
 | [agent_knowledge_sqlite.py](agent_knowledge_sqlite.py) | Recuperación de conocimiento (RAG) usando un proveedor de contexto personalizado con SQLite FTS5. |
 | [agent_knowledge_postgres.py](agent_knowledge_postgres.py) | Recuperación de conocimiento (RAG) con búsqueda híbrida en PostgreSQL (pgvector + texto completo) usando Reciprocal Rank Fusion. |
 | [agent_mcp_remote.py](agent_mcp_remote.py) | Un agente usando un servidor MCP remoto (Microsoft Learn) para búsqueda de documentación. |
 | [agent_mcp_local.py](agent_mcp_local.py) | Un agente conectado a un servidor MCP local (p. ej. para registro de gastos). |
 | [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a herramientas con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
-| [workflow_basic.py](workflow_basic.py) | Un agente basado en workflows. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation.py](agent_evaluation.py) | Evalúa un agente planificador de viajes usando evaluadores de [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Opcionalmente configura `AZURE_AI_PROJECT` en `.env` para registrar resultados en [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
