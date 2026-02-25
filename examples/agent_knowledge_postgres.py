@@ -342,24 +342,13 @@ agent = Agent(
 async def main() -> None:
     """Demonstrate hybrid search RAG with several queries."""
     print("\n[bold]=== Knowledge Retrieval (RAG) with PostgreSQL Hybrid Search ===[/bold]")
-    print("[dim]The agent uses pgvector (semantic) + tsvector (keyword) with RRF before each LLM call.[/dim]\n")
 
     # Query 1: Should match hiking boots and trekking poles
     print("[blue]User:[/blue] I'm planning a hiking trip. What boots and poles do you recommend?")
     response = await agent.run("I'm planning a hiking trip. What boots and poles do you recommend?")
     print(f"[green]Agent:[/green] {response.text}\n")
 
-    # Query 2: Should match the down jacket
-    print("[blue]User:[/blue] I need something warm for winter camping, maybe a jacket?")
-    response = await agent.run("I need something warm for winter camping, maybe a jacket?")
-    print(f"[green]Agent:[/green] {response.text}\n")
-
-    # Query 3: Should match the kayak paddle (semantic match — "water sports gear")
-    print("[blue]User:[/blue] What water sports gear do you carry?")
-    response = await agent.run("What water sports gear do you carry?")
-    print(f"[green]Agent:[/green] {response.text}\n")
-
-    # Query 4: Semantic match — "gadgets for wildlife watching" → binoculars
+    # Query 2: Semantic match — "gadgets for wildlife watching" → binoculars
     print("[blue]User:[/blue] I want gadgets for wildlife watching")
     response = await agent.run("I want gadgets for wildlife watching")
     print(f"[green]Agent:[/green] {response.text}\n")

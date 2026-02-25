@@ -62,15 +62,13 @@ async def example_without_session() -> None:
     """Without a session, each call is independent — the agent has no memory of prior messages."""
     print("\n[bold]=== Without Session (No Memory) ===[/bold]")
 
-    response = await agent.run("What's the weather like in Seattle?")
     print(f"[blue]User:[/blue] What's the weather like in Seattle?")
+    response = await agent.run("What's the weather like in Seattle?")
     print(f"[green]Agent:[/green] {response.text}")
 
-    response = await agent.run("What was the last city I asked about?")
     print(f"\n[blue]User:[/blue] What was the last city I asked about?")
+    response = await agent.run("What was the last city I asked about?")
     print(f"[green]Agent:[/green] {response.text}")
-    print("[dim]Note: Each call creates a separate session, so the agent doesn't remember previous context.[/dim]")
-
 
 async def example_with_session() -> None:
     """With a session, the agent maintains context across multiple messages."""
@@ -89,7 +87,6 @@ async def example_with_session() -> None:
     print(f"\n[blue]User:[/blue] Which of those cities has better weather?")
     response = await agent.run("Which of those cities has better weather?", session=session)
     print(f"[green]Agent:[/green] {response.text}")
-    print("[dim]Note: The agent remembers context from previous messages in the same session.[/dim]")
 
 
 async def example_session_across_agents() -> None:
@@ -112,7 +109,6 @@ async def example_session_across_agents() -> None:
     print(f"\n[blue]User:[/blue] What was the last city I asked about?")
     response = await agent2.run("What was the last city I asked about?", session=session)
     print(f"[green]Agent 2:[/green] {response.text}")
-    print("[dim]Note: The second agent continues the conversation using the session's message history.[/dim]")
 
 
 async def main() -> None:

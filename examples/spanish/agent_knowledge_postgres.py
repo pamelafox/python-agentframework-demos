@@ -343,24 +343,13 @@ agent = Agent(
 async def main() -> None:
     """Demuestra búsqueda híbrida RAG con varias consultas."""
     print("\n[bold]=== Recuperación de Conocimiento (RAG) con Búsqueda Híbrida en PostgreSQL ===[/bold]")
-    print("[dim]El agente usa pgvector (semántico) + tsvector (palabras clave) con RRF antes de cada llamada al LLM.[/dim]\n")
 
     # Consulta 1: Debería encontrar botas de senderismo y bastones de trekking
     print("[blue]Usuario:[/blue] Estoy planeando una excursión. ¿Qué botas y bastones me recomiendan?")
     response = await agent.run("Estoy planeando una excursión. ¿Qué botas y bastones me recomiendan?")
     print(f"[green]Agente:[/green] {response.text}\n")
 
-    # Consulta 2: Debería encontrar la chaqueta de plumón
-    print("[blue]Usuario:[/blue] Necesito algo abrigado para acampar en invierno, ¿tienen alguna chaqueta?")
-    response = await agent.run("Necesito algo abrigado para acampar en invierno, ¿tienen alguna chaqueta?")
-    print(f"[green]Agente:[/green] {response.text}\n")
-
-    # Consulta 3: Debería encontrar el remo de kayak (coincidencia semántica — "equipo para deportes acuáticos")
-    print("[blue]Usuario:[/blue] ¿Qué equipo para deportes acuáticos tienen?")
-    response = await agent.run("¿Qué equipo para deportes acuáticos tienen?")
-    print(f"[green]Agente:[/green] {response.text}\n")
-
-    # Consulta 4: Coincidencia semántica — "artículos para observar fauna" → binoculares
+    # Consulta 2: Coincidencia semántica — "artículos para observar fauna" → binoculares
     print("[blue]Usuario:[/blue] Quiero artículos para observar fauna silvestre")
     response = await agent.run("Quiero artículos para observar fauna silvestre")
     print(f"[green]Agente:[/green] {response.text}\n")

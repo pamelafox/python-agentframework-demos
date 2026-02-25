@@ -411,9 +411,6 @@ async def main() -> None:
     like "protective jackets and boots for hiking in snow".
     """
     print("\n[bold]=== Knowledge Retrieval with Query Rewriting ===[/bold]")
-    print("[dim]In multi-turn conversations, the LLM rewrites the search query[/dim]")
-    print("[dim]using full conversation context for better retrieval.[/dim]\n")
-
     session = agent.create_session()
 
     # Turn 1: User asks about rain protection on rocky paths

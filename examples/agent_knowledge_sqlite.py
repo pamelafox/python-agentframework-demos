@@ -294,23 +294,12 @@ async def main() -> None:
     """Demonstrate the knowledge retrieval (RAG) pattern with several queries."""
     # Query 1: Should match hiking boots and trekking poles
     print("\n[bold]=== Knowledge Retrieval (RAG) Demo ===[/bold]")
-    print("[dim]The agent searches a SQLite FTS5 knowledge base before each LLM call.[/dim]\n")
 
     print("[blue]User:[/blue] I'm planning a hiking trip. What boots and poles do you recommend?")
     response = await agent.run("I'm planning a hiking trip. What boots and poles do you recommend?")
     print(f"[green]Agent:[/green] {response.text}\n")
 
-    # Query 2: Should match the down jacket
-    print("[blue]User:[/blue] I need something warm for winter camping, maybe a jacket?")
-    response = await agent.run("I need something warm for winter camping, maybe a jacket?")
-    print(f"[green]Agent:[/green] {response.text}\n")
-
-    # Query 3: Should match the kayak paddle
-    print("[blue]User:[/blue] Do you sell anything for kayaking?")
-    response = await agent.run("Do you sell anything for kayaking?")
-    print(f"[green]Agent:[/green] {response.text}\n")
-
-    # Query 4: No match expected — demonstrates graceful "no knowledge" handling
+    # Query 2: No match expected — demonstrates graceful "no knowledge" handling
     print("[blue]User:[/blue] Do you have any surfboards?")
     response = await agent.run("Do you have any surfboards?")
     print(f"[green]Agent:[/green] {response.text}\n")

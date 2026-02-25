@@ -96,19 +96,19 @@ async def example_agent_with_memory() -> None:
     )
 
     # Step 1: Teach the agent a user preference
-    print("\n[dim]--- Step 1: Teaching a preference ---[/dim]")
+    print("\n[bold]--- Step 1: Teaching a preference ---[/bold]")
     print("[blue]User:[/blue] Remember that my favorite city is Tokyo.")
     response = await agent.run("Remember that my favorite city is Tokyo.")
     print(f"[green]Agent:[/green] {response.text}")
 
     # Step 2: Ask the agent to recall the preference from memory
-    print("\n[dim]--- Step 2: Recalling a preference ---[/dim]")
+    print("\n[bold]--- Step 2: Recalling a preference ---[/bold]")
     print("[blue]User:[/blue] What's my favorite city?")
     response = await agent.run("What's my favorite city?")
     print(f"[green]Agent:[/green] {response.text}")
 
     # Step 3: Use a tool, then verify the agent remembers tool output details
-    print("\n[dim]--- Step 3: Tool use with memory ---[/dim]")
+    print("\n[bold]--- Step 3: Tool use with memory ---[/bold]")
     print("[blue]User:[/blue] What's the weather in Paris?")
     response = await agent.run("What's the weather in Paris?")
     print(f"[green]Agent:[/green] {response.text}")
@@ -119,21 +119,6 @@ async def example_agent_with_memory() -> None:
 
 
 async def main() -> None:
-    """Run the Redis memory example."""
-    # Verify Redis has RediSearch module
-    import redis as redis_client
-
-    r = redis_client.from_url(REDIS_URL)
-    try:
-        r.execute_command("FT._LIST")
-    except Exception:
-        print(f"[red]Redis at {REDIS_URL} does not have the RediSearch module.[/red]")
-        return
-    finally:
-        r.close()
-
-    print("[dim]Redis Stack with RediSearch verified.[/dim]")
-
     await example_agent_with_memory()
 
     if async_credential:
