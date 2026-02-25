@@ -296,23 +296,11 @@ async def main() -> None:
     """Demuestra el patrón de recuperación de conocimiento (RAG) con varias consultas."""
     # Consulta 1: Debería encontrar botas de senderismo y bastones de trekking
     print("\n[bold]=== Demo de Recuperación de Conocimiento (RAG) ===[/bold]")
-    print("[dim]El agente busca en una base de conocimiento SQLite FTS5 antes de cada llamada al LLM.[/dim]\n")
-
     print("[blue]Usuario:[/blue] Estoy planeando una excursión. ¿Qué botas y bastones me recomiendan?")
     response = await agent.run("Estoy planeando una excursión. ¿Qué botas y bastones me recomiendan?")
     print(f"[green]Agente:[/green] {response.text}\n")
 
-    # Consulta 2: Debería encontrar la chaqueta de plumón
-    print("[blue]Usuario:[/blue] Necesito algo abrigado para acampar en invierno, ¿tienen alguna chaqueta?")
-    response = await agent.run("Necesito algo abrigado para acampar en invierno, ¿tienen alguna chaqueta?")
-    print(f"[green]Agente:[/green] {response.text}\n")
-
-    # Consulta 3: Debería encontrar el remo de kayak
-    print("[blue]Usuario:[/blue] ¿Venden algo para kayak?")
-    response = await agent.run("¿Venden algo para kayak?")
-    print(f"[green]Agente:[/green] {response.text}\n")
-
-    # Consulta 4: Sin coincidencia — demuestra manejo de "sin conocimiento"
+    # Consulta 2: Sin coincidencia — demuestra manejo de "sin conocimiento"
     print("[blue]Usuario:[/blue] ¿Tienen tablas de surf?")
     response = await agent.run("¿Tienen tablas de surf?")
     print(f"[green]Agente:[/green] {response.text}\n")

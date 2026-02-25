@@ -8,7 +8,6 @@ import sys
 import redis
 from dotenv import load_dotenv
 from rich import print
-from rich.console import Group
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
@@ -61,34 +60,21 @@ for key in keys:
 
     elif key_type == "list":
         items = r.lrange(key, 0, -1)
-        panels = []
-        for i, item in enumerate(items):
+        parts = []
+        for item in items:
             raw = item.decode()
             try:
-                parsed = json.loads(raw)
-                role = parsed.get("role", {}).get("value", "unknown")
-                contents = parsed.get("contents", [])
-                # Extraer texto para mostrar
-                parts = []
-                for c in contents:
-                    if c.get("type") == "text":
-                        parts.append(c["text"])
-                    elif c.get("type") == "function_call":
-                        parts.append(f"[llamada de herramienta] {c['name']}({c['arguments']})")
-                    elif c.get("type") == "function_result":
-                        parts.append(f"[resultado de herramienta] {c['result']}")
-                display = "\n".join(parts) if parts else json.dumps(parsed, indent=2)
-                color = {"user": "blue", "assistant": "green", "tool": "yellow"}.get(role, "white")
-                panels.append(
-                    Panel(display, title=f"[bold {color}]{role}[/bold {color}] [dim]({i + 1}/{len(items)})[/dim]")
-                )
+                formatted = json.dumps(json.loads(raw), indent=2)
             except json.JSONDecodeError:
-                panels.append(Panel(raw, title=f"[dim]elemento {i + 1}/{len(items)}[/dim]"))
+                formatted = raw
+            parts.append(formatted)
+        combined = "\n---\n".join(parts)
+        content = Syntax(combined, "json", theme="monokai", word_wrap=True)
         print(
             Panel(
-                Group(*panels),
+                content,
                 title=f"[bold cyan]{key}[/bold cyan] [dim]({key_type})[/dim]",
-                subtitle=f"[dim]{len(items)} mensaje(s)[/dim]",
+                subtitle=f"[dim]{len(items)} elemento(s)[/dim]",
             )
         )
 

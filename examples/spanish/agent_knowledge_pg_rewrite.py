@@ -409,9 +409,6 @@ async def main() -> None:
     en algo como "chaquetas y botas protectoras para senderismo en nieve".
     """
     print("\n[bold]=== Recuperación de conocimiento con reescritura de consultas ===[/bold]")
-    print("[dim]En conversaciones multi-turno, el LLM reescribe la consulta de búsqueda[/dim]")
-    print("[dim]usando todo el contexto para mejorar la recuperación.[/dim]\n")
-
     session = agent.create_session()
 
     # Turno 1: Usuario pide protección contra lluvia en senderos rocosos

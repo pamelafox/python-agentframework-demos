@@ -111,11 +111,31 @@ async def main() -> None:
                 },
             },
         }
+    elif API_HOST == "github":
+        # Usa GitHub Models para el LLM y el embedder de Mem0
+        mem0_config = {
+            "llm": {
+                "provider": "openai",
+                "config": {
+                    "model": os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
+                    "api_key": os.environ["GITHUB_TOKEN"],
+                    "openai_base_url": "https://models.github.ai/inference",
+                },
+            },
+            "embedder": {
+                "provider": "openai",
+                "config": {
+                    "model": "openai/text-embedding-3-small",
+                    "api_key": os.environ["GITHUB_TOKEN"],
+                    "openai_base_url": "https://models.github.ai/inference",
+                },
+            },
+        }
     elif os.getenv("OPENAI_API_KEY"):
         mem0_config = {}  # Mem0 usa OpenAI por defecto vía OPENAI_API_KEY
     else:
-        print("[red]Mem0 OSS requiere un LLM para extraer memoria.[/red]")
-        print("[red]Configura API_HOST=azure (con Azure OpenAI) o define OPENAI_API_KEY.[/red]")
+        logger.error("Mem0 OSS requiere un LLM para extraer memoria.")
+        logger.error("Configura API_HOST=azure (con Azure OpenAI) o define OPENAI_API_KEY.")
         return
 
     mem0_client = await AsyncMemory.from_config(mem0_config)
@@ -133,27 +153,25 @@ async def main() -> None:
     )
 
     # Paso 1: Enseñarle preferencias al agente
-    print("\n[dim]--- Paso 1: Enseñando preferencias ---[/dim]")
+    print("\n[bold]--- Paso 1: Enseñando preferencias ---[/bold]")
     print("[blue]Usuario:[/blue] Recuerda que mi ciudad favorita es Tokio y prefiero Celsius.")
     response = await agent.run("Recuerda que mi ciudad favorita es Tokio y prefiero Celsius.")
     print(f"[green]Agente:[/green] {response.text}")
 
     # Paso 2: Empezar una nueva sesión: Mem0 debería inyectar hechos recordados
-    print("\n[dim]--- Paso 2: Nueva sesión — recordando preferencias ---[/dim]")
+    print("\n[bold]--- Paso 2: Nueva sesión — recordando preferencias ---[/bold]")
     print("[blue]Usuario:[/blue] ¿Cuál es mi ciudad favorita?")
     response = await agent.run("¿Cuál es mi ciudad favorita?")
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: Mem0 extrajo y guardó hechos, y luego los inyectó en la nueva sesión.[/dim]")
 
     # Paso 3: Usar una herramienta, demostrando memoria con salidas de herramientas
-    print("\n[dim]--- Paso 3: Uso de herramientas con memoria ---[/dim]")
+    print("\n[bold]--- Paso 3: Uso de herramientas con memoria ---[/bold]")
     print("[blue]Usuario:[/blue] ¿Cómo está el clima en mi ciudad favorita?")
     response = await agent.run("¿Cómo está el clima en mi ciudad favorita?")
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: El agente usó la memoria de Mem0 para saber qué ciudad revisar.[/dim]")
 
     # Mostrar qué ha guardado Mem0
-    print("\n[dim]--- Memorias extraídas ---[/dim]")
+    print("\n[bold]--- Memorias extraídas ---[/bold]")
     memories = await mem0_client.get_all(user_id=user_id)
     for mem in memories.get("results", []):
         print(f"  [cyan]•[/cyan] {mem.get('memory', '')}")

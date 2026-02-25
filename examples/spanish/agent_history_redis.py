@@ -63,7 +63,7 @@ async def example_persistent_session() -> None:
     session_id = str(uuid.uuid4())
 
     # Fase 1: Iniciar una conversación con un proveedor de historial en Redis
-    print("[dim]--- Fase 1: Iniciando conversación ---[/dim]")
+    print("[bold]--- Fase 1: Iniciando conversación ---[/bold]")
     redis_provider = RedisHistoryProvider(source_id="redis_chat", redis_url=REDIS_URL)
 
     agent = Agent(
@@ -84,7 +84,7 @@ async def example_persistent_session() -> None:
     print(f"[green]Agente:[/green] {response.text}")
 
     # Fase 2: Simular un reinicio de la app — reconectar usando el mismo session_id en Redis
-    print("\n[dim]--- Fase 2: Reanudando después del 'reinicio' ---[/dim]")
+    print("\n[bold]--- Fase 2: Reanudando después del 'reinicio' ---[/bold]")
     redis_provider2 = RedisHistoryProvider(source_id="redis_chat", redis_url=REDIS_URL)
 
     agent2 = Agent(
@@ -99,7 +99,6 @@ async def example_persistent_session() -> None:
     print("[blue]Usuario:[/blue] ¿Cuál de las ciudades por las que pregunté tuvo mejor clima?")
     response = await agent2.run("¿Cuál de las ciudades por las que pregunté tuvo mejor clima?", session=session2)
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: El agente recordó la conversación de la Fase 1 gracias a la persistencia en Redis.[/dim]")
 
 
 async def main() -> None:
@@ -111,16 +110,14 @@ async def main() -> None:
     try:
         r.ping()
     except Exception as e:
-        print(f"[red]No se puede conectar a Redis en {REDIS_URL}: {e}[/red]")
-        print(
-            "[red]Asegúrate de que Redis esté corriendo (por ejemplo, con el dev container"
-            " o con 'docker run -p 6379:6379 redis:7-alpine').[/red]"
+        logger.error(f"No se puede conectar a Redis en {REDIS_URL}: {e}")
+        logger.error(
+            "Asegúrate de que Redis esté corriendo (por ejemplo, con el dev container"
+            " o con 'docker run -p 6379:6379 redis:7-alpine')."
         )
         return
     finally:
         r.close()
-
-    print("[dim]Conexión a Redis verificada.[/dim]")
 
     await example_persistent_session()
 
