@@ -21,7 +21,7 @@ from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from typing_extensions import Never
+from typing_extensions import Literal, Never
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
@@ -51,10 +51,15 @@ else:
 class CandidateReview(BaseModel):
     """Typed output produced by the reviewer — suitable for APIs, databases, or scoring engines."""
 
-    technical_assessment: str = Field(description="Summary of the candidate's technical strengths and gaps.")
-    behavioral_assessment: str = Field(description="Summary of the candidate's behavioral strengths and gaps.")
-    cultural_assessment: str = Field(description="Summary of the candidate's cultural fit strengths and gaps.")
-    recommendation: str = Field(description="One of: strong hire, hire with reservations, no hire.")
+    technical_score: int = Field(description="Technical skills score from 1 to 10.")
+    technical_reason: str = Field(description="Justification for the technical score.")
+    behavioral_score: int = Field(description="Behavioral skills score from 1 to 10.")
+    behavioral_reason: str = Field(description="Justification for the behavioral score.")
+    cultural_score: int = Field(description="Cultural fit score from 1 to 10.")
+    cultural_reason: str = Field(description="Justification for the cultural score.")
+    recommendation: Literal["strong hire", "hire with reservations", "no hire"] = Field(
+        description="Final hiring recommendation."
+    )
 
 
 class DispatchPrompt(Executor):
@@ -144,7 +149,7 @@ workflow = (
 async def main() -> None:
     """Run the interview pipeline and print the typed review."""
     prompt = (
-        "Candidate: Alex Chen, applying for Senior Software Engineer. "
+        "Candidate applying for Senior Software Engineer. "
         "5 years experience in Python and distributed systems. "
         "Strong communicator but limited cloud experience."
     )
@@ -153,9 +158,9 @@ async def main() -> None:
     events = await workflow.run(prompt)
     for output in events.get_outputs():
         print(f"Recommendation: {output.recommendation}\n")
-        print(f"Technical Assessment:\n{output.technical_assessment}\n")
-        print(f"Behavioral Assessment:\n{output.behavioral_assessment}\n")
-        print(f"Cultural Assessment:\n{output.cultural_assessment}")
+        print(f"Technical: {output.technical_score}/10 — {output.technical_reason}\n")
+        print(f"Behavioral: {output.behavioral_score}/10 — {output.behavioral_reason}\n")
+        print(f"Cultural: {output.cultural_score}/10 — {output.cultural_reason}")
 
     if async_credential:
         await async_credential.close()
