@@ -24,6 +24,6 @@
             ]
         }
     },
-    "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && uv sync",
+    "postCreateCommand": "uv sync",
     "remoteUser": "vscode"
 }
