@@ -48,22 +48,22 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
     eval_model_config = OpenAIModelConfiguration(
         type="openai",
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model="openai/gpt-5-mini",
+        model="openai/gpt-4.1-mini",
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
     eval_model_config = OpenAIModelConfiguration(
         type="openai",
         api_key=os.environ["OPENAI_API_KEY"],
-        model=os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
+        model=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"),
     )
 
 

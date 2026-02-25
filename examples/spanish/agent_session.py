@@ -35,10 +35,10 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
-    client = OpenAIChatClient(api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini"))
+    client = OpenAIChatClient(api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"))
 
 
 @tool
@@ -62,14 +62,13 @@ async def example_without_session() -> None:
     """Sin una sesión, cada llamada es independiente: el agente no recuerda mensajes previos."""
     print("\n[bold]=== Sin sesión (sin memoria) ===[/bold]")
 
-    response = await agent.run("¿Cómo está el clima en Seattle?")
     print("[blue]Usuario:[/blue] ¿Cómo está el clima en Seattle?")
+    response = await agent.run("¿Cómo está el clima en Seattle?")
     print(f"[green]Agente:[/green] {response.text}")
 
-    response = await agent.run("¿Cuál fue la última ciudad por la que pregunté?")
     print("\n[blue]Usuario:[/blue] ¿Cuál fue la última ciudad por la que pregunté?")
+    response = await agent.run("¿Cuál fue la última ciudad por la que pregunté?")
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: Cada llamada crea una sesión distinta, así que el agente no recuerda el contexto anterior.[/dim]")
 
 
 async def example_with_session() -> None:
@@ -89,7 +88,6 @@ async def example_with_session() -> None:
     print("\n[blue]Usuario:[/blue] ¿Cuál de esas ciudades tiene mejor clima?")
     response = await agent.run("¿Cuál de esas ciudades tiene mejor clima?", session=session)
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: El agente recuerda el contexto de los mensajes anteriores en la misma sesión.[/dim]")
 
 
 async def example_session_across_agents() -> None:
@@ -112,7 +110,6 @@ async def example_session_across_agents() -> None:
     print("\n[blue]Usuario:[/blue] ¿Cuál fue la última ciudad por la que pregunté?")
     response = await agent2.run("¿Cuál fue la última ciudad por la que pregunté?", session=session)
     print(f"[green]Agente 2:[/green] {response.text}")
-    print("[dim]Nota: El segundo agente continúa la conversación usando el historial de mensajes de la sesión.[/dim]")
 
 
 async def main() -> None:

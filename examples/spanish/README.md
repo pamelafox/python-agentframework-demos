@@ -118,13 +118,13 @@ Si quieres ejecutar los scripts localmente, necesitas configurar la variable de 
     export GITHUB_TOKEN=tu_token_de_acceso_personal
     ```
 
-10. Opcionalmente, puedes usar un modelo diferente a "gpt-5-mini" configurando la variable de entorno `GITHUB_MODEL`. Usa un modelo que soporte llamadas de funciones, como: `gpt-5`, `gpt-5-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
+10. Opcionalmente, puedes usar un modelo diferente a "gpt-4.1-mini" configurando la variable de entorno `GITHUB_MODEL`. Usa un modelo que soporte llamadas de funciones, como: `gpt-5`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
 
 ## Usar modelos de Azure AI Foundry
 
 Puedes ejecutar todos los ejemplos en este repositorio usando GitHub Models. Si quieres ejecutar los ejemplos usando modelos de Azure AI Foundry, necesitas provisionar los recursos de Azure AI, lo que generará costos.
 
-Este proyecto incluye infraestructura como código (IaC) para provisionar despliegues de Azure OpenAI de "gpt-5-mini" y "text-embedding-3-large" a través de Azure AI Foundry. La IaC está definida en el directorio `infra` y usa Azure Developer CLI para provisionar los recursos.
+Este proyecto incluye infraestructura como código (IaC) para provisionar despliegues de Azure OpenAI de "gpt-4.1-mini" y "text-embedding-3-large" a través de Azure AI Foundry. La IaC está definida en el directorio `infra` y usa Azure Developer CLI para provisionar los recursos.
 
 1. Asegúrate de tener instalado [Azure Developer CLI (azd)](https://aka.ms/install-azd).
 
@@ -186,11 +186,14 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [agent_memory_redis.py](agent_memory_redis.py) | Memoria de largo plazo con RedisContextProvider, guardando y recuperando contexto conversacional desde Redis. |
 | [agent_memory_mem0.py](agent_memory_mem0.py) | Memoria de largo plazo con Mem0 OSS, extrayendo y recordando hechos del usuario entre sesiones. |
 | [agent_supervisor.py](agent_supervisor.py) | Un supervisor que orquesta subagentes de actividades y recetas. |
+<<<<<<< HEAD
 | [agent_with_subagent.py](agent_with_subagent.py) | Aislamiento de contexto con subagentes para mantener los prompts enfocados en herramientas relevantes. |
 | [agent_without_subagent.py](agent_without_subagent.py) | Ejemplo de inflado de contexto cuando un solo agente carga todos los esquemas de herramientas en un mismo prompt. |
 | [agent_summarization.py](agent_summarization.py) | Compactación de contexto mediante middleware de resumen para reducir el uso de tokens en conversaciones largas. |
 | [workflow_magenticone.py](workflow_magenticone.py) | Un workflow multi-agente MagenticOne. |
 | [workflow_hitl.py](workflow_hitl.py) | Human-in-the-loop (HITL) para agentes con herramientas con feedback humano. |
+=======
+>>>>>>> main
 | [agent_middleware.py](agent_middleware.py) | Middleware de agente, chat y funciones para logging, timing y bloqueo. |
 | [agent_knowledge_aisearch.py](agent_knowledge_aisearch.py) | Recuperación de conocimiento (RAG) usando Azure AI Search con AgentFrameworkAzureAISearchRAG. |
 | [agent_knowledge_sqlite.py](agent_knowledge_sqlite.py) | Recuperación de conocimiento (RAG) usando un proveedor de contexto personalizado con SQLite FTS5. |
@@ -200,6 +203,7 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [agent_mcp_remote.py](agent_mcp_remote.py) | Un agente usando un servidor MCP remoto (Microsoft Learn) para búsqueda de documentación. |
 | [agent_mcp_local.py](agent_mcp_local.py) | Un agente conectado a un servidor MCP local (p. ej. para registro de gastos). |
 | [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a herramientas con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
+<<<<<<< HEAD
 | [workflow_rag_ingest.py](workflow_rag_ingest.py) | Un pipeline de ingesta para RAG con ejecutores Python puros: descarga un documento con markitdown, lo divide en fragmentos y genera embeddings con un modelo de OpenAI. |
 | [workflow_agents.py](workflow_agents.py) | Un workflow con agentes de IA como ejecutores: un Escritor redacta contenido y un Revisor da retroalimentación. |
 | [workflow_agents_sequential.py](workflow_agents_sequential.py) | Una orquestación secuencial usando `SequentialBuilder`: Escritor y Revisor se ejecutan en orden compartiendo todo el historial de la conversación. |
@@ -210,6 +214,8 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [workflow_conditional_state_isolated.py](workflow_conditional_state_isolated.py) | El workflow condicional con estado usando una fábrica `create_workflow(...)` para crear agentes/workflow nuevos por tarea y así aislar estado e hilos de agente. |
 | [workflow_switch_case.py](workflow_switch_case.py) | Un workflow con enrutamiento switch-case: un agente Clasificador usa salidas estructuradas para categorizar un mensaje y enrutarlo al manejador especializado. |
 | [workflow_converge.py](workflow_converge.py) | Un workflow con rama y convergencia: Revisor enruta a Publicador o Editor y luego converge antes del resumen final. |
+=======
+>>>>>>> main
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation_generate.py](agent_evaluation_generate.py) | Genera datos sintéticos de evaluación para el agente planificador de viajes. |

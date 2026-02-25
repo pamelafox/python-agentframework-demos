@@ -38,11 +38,11 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
 
 
@@ -63,7 +63,7 @@ async def example_persistent_session() -> None:
     session_id = str(uuid.uuid4())
 
     # Phase 1: Start a conversation with a Redis-backed history provider
-    print("[dim]--- Phase 1: Starting conversation ---[/dim]")
+    print("[bold]--- Phase 1: Starting conversation ---[/bold]")
     redis_provider = RedisHistoryProvider(source_id="redis_chat", redis_url=REDIS_URL)
 
     agent = Agent(
@@ -84,7 +84,7 @@ async def example_persistent_session() -> None:
     print(f"[green]Agent:[/green] {response.text}")
 
     # Phase 2: Simulate an application restart — reconnect using the same session ID in Redis
-    print("\n[dim]--- Phase 2: Resuming after 'restart' ---[/dim]")
+    print("\n[bold]--- Phase 2: Resuming after 'restart' ---[/bold]")
     redis_provider2 = RedisHistoryProvider(source_id="redis_chat", redis_url=REDIS_URL)
 
     agent2 = Agent(
@@ -99,7 +99,6 @@ async def example_persistent_session() -> None:
     print("[blue]User:[/blue] Which of the cities I asked about had better weather?")
     response = await agent2.run("Which of the cities I asked about had better weather?", session=session2)
     print(f"[green]Agent:[/green] {response.text}")
-    print("[dim]Note: The agent remembered the conversation from Phase 1 via Redis persistence.[/dim]")
 
 
 async def main() -> None:
@@ -111,16 +110,14 @@ async def main() -> None:
     try:
         r.ping()
     except Exception as e:
-        print(f"[red]Cannot connect to Redis at {REDIS_URL}: {e}[/red]")
-        print(
-            "[red]Ensure Redis is running (e.g. via the dev container"
-            " or 'docker run -p 6379:6379 redis:7-alpine').[/red]"
+        logger.error(f"Cannot connect to Redis at {REDIS_URL}: {e}")
+        logger.error(
+            "Ensure Redis is running (e.g. via the dev container"
+            " or 'docker run -p 6379:6379 redis:7-alpine')."
         )
         return
     finally:
         r.close()
-
-    print("[dim]Redis connection verified.[/dim]")
 
     await example_persistent_session()
 
