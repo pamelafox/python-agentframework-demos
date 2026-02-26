@@ -74,7 +74,7 @@ agent = Agent(
 
 async def agent_callback(messages, stream=False, session_state=None, context=None) -> dict:
     """Callback que conecta RedTeam con el agente."""
-    query = messages[-1].content
+    query = messages[-1]["content"]
     try:
         response = await agent.run(query)
         return {"messages": [{"content": response.text, "role": "assistant"}]}
