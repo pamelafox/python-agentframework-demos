@@ -16,7 +16,7 @@ import asyncio
 import os
 import sys
 
-from agent_framework import Agent, AgentExecutorResponse, Executor, WorkflowBuilder, WorkflowContext, handler
+from agent_framework import Agent, AgentExecutorResponse, Executor, Message, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
@@ -90,11 +90,11 @@ class ExtractReview(Executor):
             sections.append(f"[{label}]\n{result.agent_response.text}")
         combined = "\n\n".join(sections)
 
-        prompt = (
-            "You are a hiring committee reviewer. Based on the following interviewer assessments, "
-            "produce a structured candidate review.\n\n" + combined
-        )
-        response = await self._client.get_response(prompt, options={"response_format": CandidateReview})
+        messages = [
+            Message(role="system", text="You are a hiring committee reviewer. Based on the following interviewer assessments, produce a structured candidate review."),
+            Message(role="user", text=combined),
+        ]
+        response = await self._client.get_response(messages, options={"response_format": CandidateReview})
         review: CandidateReview = response.value
         await ctx.yield_output(review)
 

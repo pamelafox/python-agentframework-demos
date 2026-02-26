@@ -1,9 +1,10 @@
 """Fan-out/fan-in with LLM-as-judge ranking aggregation.
 
 Three creative agents with different personas (bold, minimalist,
-emotional) each propose a marketing slogan.  A formatter collects the
-candidates, then a judge Agent scores and ranks them — letting the LLM
-evaluate creativity, memorability, and brand fit.
+emotional) each propose a marketing slogan.  A ranker Executor collects
+the candidates, formats them, and uses an internal judge Agent to score
+and rank them — letting the LLM evaluate creativity, memorability, and
+brand fit.
 
 Aggregation technique: LLM-as-judge (generate N candidates, rank the best).
 
@@ -16,11 +17,13 @@ import asyncio
 import os
 import sys
 
-from agent_framework import Agent, AgentExecutorResponse, Executor, WorkflowBuilder, WorkflowContext, handler
+from typing import Never
+
+from agent_framework import Agent, AgentExecutorResponse, Executor, Message, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-from typing_extensions import Never
+
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
@@ -55,22 +58,37 @@ class DispatchPrompt(Executor):
         await ctx.send_message(prompt)
 
 
-class FormatCandidates(Executor):
-    """Fan-in aggregator that formats candidate slogans for the judge."""
+class RankerExecutor(Executor):
+    """Fan-in aggregator that formats candidate slogans and ranks them via the LLM client directly."""
+
+    def __init__(self, *, client: OpenAIChatClient, id: str = "Ranker") -> None:
+        super().__init__(id=id)
+        self._client = client
 
     @handler
-    async def format(
+    async def run(
         self,
         results: list[AgentExecutorResponse],
         ctx: WorkflowContext[Never, str],
     ) -> None:
-        """Collect slogans into a labeled list for the judge Agent."""
+        """Collect slogans, format them, and ask the LLM to rank them."""
         lines = []
         for result in results:
             slogan = result.agent_response.text.strip().strip("\"'").split("\n")[0].strip().strip("\"'")
             lines.append(f"- [{result.executor_id}]: \"{slogan}\"")
-        await ctx.send_message("Candidate slogans:\n" + "\n".join(lines))
 
+        messages = [
+            Message(role="system", text=(
+                "You are a senior creative director judging marketing slogans. "
+                "Given a list of candidate slogans, rank them from best to worst. "
+                "For each slogan, give a 1-10 score and a one-sentence justification "
+                "evaluating creativity, memorability, clarity, and brand fit. "
+                'Format: #1 (score X) [AgentName]: "slogan" — justification'
+            )),
+            Message(role="user", text="Candidate slogans:\n" + "\n".join(lines)),
+        ]
+        response = await self._client.get_response(messages)
+        await ctx.yield_output(response.text)
 
 dispatcher = DispatchPrompt(id="dispatcher")
 
@@ -104,30 +122,19 @@ emotional_writer = Agent(
     ),
 )
 
-ranker = FormatCandidates(id="ranker")
-
-judge = Agent(
-    client=client,
-    name="Judge",
-    instructions=(
-        "You are a senior creative director judging marketing slogans. "
-        "Given a list of candidate slogans, rank them from best to worst. "
-        "For each slogan, give a 1-10 score and a one-sentence justification "
-        "evaluating creativity, memorability, clarity, and brand fit. "
-        "Format: #1 (score X) [AgentName]: \"slogan\" — justification"
-    ),
-)
+# The ranker Executor calls the LLM client directly to handle fan-in —
+# it formats the collected slogans and has the LLM rank them.
+ranker = RankerExecutor(client=client)
 
 workflow = (
     WorkflowBuilder(
         name="FanOutFanInRanked",
         description="Generate slogans in parallel, then LLM-judge ranks them.",
         start_executor=dispatcher,
-        output_executors=[judge],
+        output_executors=[ranker],
     )
     .add_fan_out_edges(dispatcher, [bold_writer, minimalist_writer, emotional_writer])
     .add_fan_in_edges([bold_writer, minimalist_writer, emotional_writer], ranker)
-    .add_edge(ranker, judge)
     .build()
 )
 
