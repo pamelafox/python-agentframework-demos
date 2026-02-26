@@ -377,7 +377,7 @@ Links shared:
 
 Links shared:
 
-- [Python + Agents Session 1 write-up](https://github.com/pamelafox/presentation-writeups/blob/main/presentations/python-agents-session1/outputs/writeup.md)
+- [Python + Agents Session 1 write-up](../session-1/outputs/writeup.md)
 
 ### VS Code often forgets you have a venv in your project — does it swap that knowledge out of its memory?
 
