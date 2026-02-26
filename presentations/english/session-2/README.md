@@ -59,7 +59,7 @@ By the end, we saw how to build agents that were not only capable but context‑
 ![Series overview slide](images/slide_1.png)  
 [Watch from 00:05](https://www.youtube.com/watch?v=BMzI9cEaGBM&t=5s)
 
-This series consists of six sessions teaching how to build AI agents using the Microsoft agent framework. It spans two weeks and progressively introduces tools, techniques, and best practices for creating intelligent agents capable of handling complex tasks. Registration remains open during the series, providing access to session recordings and resources.
+This series consists of six sessions teaching how to build AI agents using the Microsoft Agent Framework. It spans two weeks and progressively introduces tools, techniques, and best practices for creating intelligent agents capable of handling complex tasks. Registration remains open during the series, providing access to session recordings and resources.
 
 ### Adding context and memory to agents
 
