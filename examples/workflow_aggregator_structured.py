@@ -55,8 +55,6 @@ class CandidateReview(BaseModel):
     technical_reason: str = Field(description="Justification for the technical score.")
     behavioral_score: int = Field(description="Behavioral skills score from 1 to 10.")
     behavioral_reason: str = Field(description="Justification for the behavioral score.")
-    cultural_score: int = Field(description="Cultural fit score from 1 to 10.")
-    cultural_reason: str = Field(description="Justification for the cultural score.")
     recommendation: Literal["strong hire", "hire with reservations", "no hire"] = Field(
         description="Final hiring recommendation."
     )
@@ -159,8 +157,7 @@ async def main() -> None:
     for output in events.get_outputs():
         print(f"Recommendation: {output.recommendation}\n")
         print(f"Technical: {output.technical_score}/10 — {output.technical_reason}\n")
-        print(f"Behavioral: {output.behavioral_score}/10 — {output.behavioral_reason}\n")
-        print(f"Cultural: {output.cultural_score}/10 — {output.cultural_reason}")
+        print(f"Behavioral: {output.behavioral_score}/10 — {output.behavioral_reason}")
 
     if async_credential:
         await async_credential.close()

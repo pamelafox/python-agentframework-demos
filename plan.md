@@ -73,6 +73,9 @@ This plan is organized by proposed example file. For each file: (1) source examp
   - Covers the outline item for multi-selection edges with a deterministic branching example.
 
 ### 8) `/workspace/examples/workflow_agents_concurrent.py`
+
+https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/concurrent?pivots=programming-language-python
+
 - **Pull from**
   - Local: `/workspace/examples/workflow_agents_sequential.py` (provider/bootstrap style), `/workspace/examples/workflow_agents_streaming.py` (stream output handling)
   - Upstream: `python/samples/03-workflows/orchestrations/concurrent_agents.py`
@@ -93,6 +96,8 @@ This plan is organized by proposed example file. For each file: (1) source examp
   - Teaches where custom post-processing belongs in builder-based orchestration.
 
 ### 10) `/workspace/examples/workflow_handoff_builder_rules.py`
+https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff?pivots=programming-language-python
+
 - **Pull from**
   - Local: `/workspace/examples/agent_with_subagent.py` and `/workspace/examples/agent_supervisor.py` (architectural contrast language), plus common provider bootstrap from workflow examples
   - Upstream: `python/samples/03-workflows/orchestrations/handoff_simple.py`, `python/samples/03-workflows/orchestrations/README.md` handoff section
@@ -154,3 +159,11 @@ This plan is organized by proposed example file. For each file: (1) source examp
 
 ## Open Questions for MAF Team
 - **When is `output_executors` needed/recommended?** By default, `WorkflowBuilder` surfaces all outputs from all executors as events. If you only want outputs from certain executors, use `output_executors`. In our fan-out/fan-in demos, without `output_executors=[<aggregator>]`, the intermediate `Agent` nodes' `AgentResponse` objects leak into `get_outputs()` alongside the aggregator's output. We added `output_executors` to every fan-out/fan-in demo. Worth a slide callout — possibly on the same slide as the aggregation patterns table.
+
+## Pamela's sequencing notes for presentation
+
+Not sure ConcurrentBuilder is correct in the flow.
+
+Also we could show ConcurrentBuilder additional examples if there is time (see docs for custom aggregator, executor-with-agent nodes), but not that exciting.
+
+Could also drop ConcurrentBuilder entirely, given it is not strictly needed.

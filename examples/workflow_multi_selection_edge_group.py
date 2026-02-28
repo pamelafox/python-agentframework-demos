@@ -1,7 +1,9 @@
-"""Deterministic multi-selection routing with one-or-many targets.
+"""LLM-powered multi-selection routing with one-or-many targets.
 
 Demonstrates: WorkflowBuilder.add_multi_selection_edge_group where a single
-source message can activate one or multiple downstream executors.
+source message can activate one or multiple downstream executors.  The
+parse-ticket step uses an LLM call with structured outputs (response_format)
+so classification is semantic rather than keyword-based.
 
 Run:
     uv run examples/workflow_multi_selection_edge_group.py
@@ -9,36 +11,73 @@ Run:
 """
 
 import asyncio
+import os
 import sys
-from dataclasses import dataclass
 
-from agent_framework import Executor, WorkflowBuilder, WorkflowContext, handler
+from agent_framework import Executor, Message, WorkflowBuilder, WorkflowContext, handler
+from agent_framework.openai import OpenAIChatClient
+from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from typing_extensions import Never
 
+load_dotenv(override=True)
+API_HOST = os.getenv("API_HOST", "github")
 
-@dataclass
-class Ticket:
-    """Structured representation of a support ticket."""
+# Configure the chat client based on the API host
+async_credential = None
+if API_HOST == "azure":
+    async_credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(async_credential, "https://cognitiveservices.azure.com/.default")
+    client = OpenAIChatClient(
+        base_url=f"{os.environ['AZURE_OPENAI_ENDPOINT']}/openai/v1/",
+        api_key=token_provider,
+        model_id=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
+    )
+elif API_HOST == "github":
+    client = OpenAIChatClient(
+        base_url="https://models.github.ai/inference",
+        api_key=os.environ["GITHUB_TOKEN"],
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+    )
+else:
+    client = OpenAIChatClient(
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+    )
 
-    text: str
-    is_bug: bool
-    is_billing: bool
-    is_urgent: bool
+
+class Ticket(BaseModel):
+    """Structured representation of a support ticket, produced by the LLM."""
+
+    text: str = Field(description="The original ticket text.")
+    is_bug: bool = Field(description="True if the ticket describes a bug, error, or crash.")
+    is_billing: bool = Field(description="True if the ticket relates to billing, invoices, or charges.")
+    is_urgent: bool = Field(description="True if the ticket conveys urgency.")
 
 
 class ParseTicketExecutor(Executor):
-    """Parse incoming text into typed routing metadata."""
+    """Parse incoming text into typed routing metadata using an LLM."""
+
+    def __init__(self, *, client: OpenAIChatClient, **kwargs: object) -> None:
+        super().__init__(**kwargs)
+        self._client = client
 
     @handler
     async def parse(self, text: str, ctx: WorkflowContext[Ticket]) -> None:
-        """Convert raw text to a Ticket with routing flags."""
-        lower = text.lower()
-        ticket = Ticket(
-            text=text,
-            is_bug=("bug" in lower or "error" in lower or "crash" in lower),
-            is_billing=("billing" in lower or "invoice" in lower or "charge" in lower),
-            is_urgent=("urgent" in lower or "asap" in lower),
-        )
+        """Call the LLM with structured outputs to classify the ticket."""
+        messages = [
+            Message(
+                role="system",
+                text=(
+                    "You are a support ticket classifier. Given a customer message, "
+                    "determine whether it describes a bug, relates to billing, and whether it is urgent. "
+                    "Return the classification as structured JSON."
+                ),
+            ),
+            Message(role="user", text=text),
+        ]
+        response = await self._client.get_response(messages, options={"response_format": Ticket})
+        ticket: Ticket = response.value
         await ctx.send_message(ticket)
 
 
@@ -86,7 +125,7 @@ def select_targets(ticket: Ticket, target_ids: list[str]) -> list[str]:
     return selected
 
 
-parse_ticket = ParseTicketExecutor(id="parse_ticket")
+parse_ticket = ParseTicketExecutor(client=client, id="parse_ticket")
 support = SupportExecutor(id="support")
 engineering = EngineeringExecutor(id="engineering")
 billing = BillingExecutor(id="billing")
@@ -119,6 +158,9 @@ async def main() -> None:
         events = await workflow.run(sample)
         for output in events.get_outputs():
             print(f"  {output}")
+
+    if async_credential:
+        await async_credential.close()
 
 
 if __name__ == "__main__":

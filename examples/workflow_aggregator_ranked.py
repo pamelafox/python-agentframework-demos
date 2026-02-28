@@ -23,6 +23,7 @@ from agent_framework import Agent, AgentExecutorResponse, Executor, Message, Wor
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 
 
 load_dotenv(override=True)
@@ -50,6 +51,22 @@ else:
     )
 
 
+class RankedSlogan(BaseModel):
+    """A single ranked slogan entry."""
+
+    rank: int = Field(description="Rank position, 1 = best.")
+    agent_name: str = Field(description="Name of the agent that produced the slogan.")
+    slogan: str = Field(description="The marketing slogan text.")
+    score: int = Field(description="Score from 1 to 10.")
+    justification: str = Field(description="One-sentence justification for the score.")
+
+
+class RankedSlogans(BaseModel):
+    """Typed output: a ranked list of slogans."""
+
+    rankings: list[RankedSlogan] = Field(description="Slogans ranked from best to worst.")
+
+
 class DispatchPrompt(Executor):
     """Emit the product brief downstream for fan-out broadcast."""
 
@@ -69,7 +86,7 @@ class RankerExecutor(Executor):
     async def run(
         self,
         results: list[AgentExecutorResponse],
-        ctx: WorkflowContext[Never, str],
+        ctx: WorkflowContext[Never, RankedSlogans],
     ) -> None:
         """Collect slogans, format them, and ask the LLM to rank them."""
         lines = []
@@ -82,13 +99,12 @@ class RankerExecutor(Executor):
                 "You are a senior creative director judging marketing slogans. "
                 "Given a list of candidate slogans, rank them from best to worst. "
                 "For each slogan, give a 1-10 score and a one-sentence justification "
-                "evaluating creativity, memorability, clarity, and brand fit. "
-                'Format: #1 (score X) [AgentName]: "slogan" — justification'
+                "evaluating creativity, memorability, clarity, and brand fit."
             )),
             Message(role="user", text="Candidate slogans:\n" + "\n".join(lines)),
         ]
-        response = await self._client.get_response(messages)
-        await ctx.yield_output(response.text)
+        response = await self._client.get_response(messages, options={"response_format": RankedSlogans})
+        await ctx.yield_output(response.value)
 
 dispatcher = DispatchPrompt(id="dispatcher")
 
@@ -146,7 +162,9 @@ async def main() -> None:
 
     events = await workflow.run(prompt)
     for output in events.get_outputs():
-        print(output)
+        for entry in output.rankings:
+            print(f"#{entry.rank} (score {entry.score}) [{entry.agent_name}]: \"{entry.slogan}\"")
+            print(f"   {entry.justification}\n")
 
     if async_credential:
         await async_credential.close()
