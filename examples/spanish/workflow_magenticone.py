@@ -5,11 +5,13 @@ crear un plan de viaje, con salida en streaming y eventos del ledger de orquesta
 
 Run:
     uv run examples/spanish/workflow_magenticone.py
+    uv run examples/spanish/workflow_magenticone.py --devui
 """
 
 import asyncio
 import json
 import os
+import sys
 from typing import cast
 
 from agent_framework import Agent, AgentResponseUpdate, Message, WorkflowEvent
@@ -191,4 +193,9 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    if "--devui" in sys.argv:
+        from agent_framework.devui import serve
+
+        serve(entities=[magentic_workflow], port=8101, auto_open=True)
+    else:
+        asyncio.run(main())

@@ -48,7 +48,7 @@ else:
 # igual que las subclases de Executor en workflow_rag_ingest.py.
 writer = Agent(
     client=client,
-    name="Escritor",
+    name="Writer",
     instructions=(
         "Eres un escritor de contenido conciso. "
         "Escribe un artículo corto (2-3 párrafos) claro y atractivo sobre el tema del usuario. "
@@ -58,7 +58,7 @@ writer = Agent(
 
 reviewer = Agent(
     client=client,
-    name="Revisor",
+    name="Reviewer",
     instructions=(
         "Eres un revisor de contenido reflexivo. "
         "Lee el borrador del escritor y ofrece retroalimentación específica y constructiva. "
@@ -76,7 +76,10 @@ async def main():
     prompt = "Escribe una publicación de LinkedIn de 2 frases: \"Por qué tu piloto de IA se ve bien, pero falla en producción.\""
     print(f"Prompt: {prompt}\n")
     events = await workflow.run(prompt)
-    print(events.get_outputs())
+
+    for output in events.get_outputs():
+        print("===== Salida =====")
+        print(output)
 
     if async_credential:
         await async_credential.close()
