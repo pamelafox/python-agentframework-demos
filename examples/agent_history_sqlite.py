@@ -38,11 +38,11 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
 
 
@@ -111,7 +111,7 @@ async def main() -> None:
 
     # Phase 1: Start a conversation with a SQLite-backed history provider
     print("\n[bold]=== Persistent SQLite Session ===[/bold]")
-    print("[dim]--- Phase 1: Starting conversation ---[/dim]")
+    print("[bold]--- Phase 1: Starting conversation ---[/bold]")
 
     sqlite_provider = SQLiteHistoryProvider(db_path=db_path)
 
@@ -132,12 +132,8 @@ async def main() -> None:
     response = await agent.run("How about Paris?", session=session)
     print(f"[green]Agent:[/green] {response.text}")
 
-    messages = await sqlite_provider.get_messages(session_id)
-    print(f"[dim]Messages stored in SQLite: {len(messages)}[/dim]")
-    sqlite_provider.close()
-
     # Phase 2: Simulate an application restart — reconnect to the same session ID in SQLite
-    print("\n[dim]--- Phase 2: Resuming after 'restart' ---[/dim]")
+    print("\n[bold]--- Phase 2: Resuming after 'restart' ---[/bold]")
     sqlite_provider2 = SQLiteHistoryProvider(db_path=db_path)
 
     agent2 = Agent(
@@ -152,7 +148,6 @@ async def main() -> None:
     print("[blue]User:[/blue] Which of the cities I asked about had better weather?")
     response = await agent2.run("Which of the cities I asked about had better weather?", session=session2)
     print(f"[green]Agent:[/green] {response.text}")
-    print("[dim]Note: The agent remembered the conversation from Phase 1 via SQLite persistence.[/dim]")
 
     sqlite_provider2.close()
 

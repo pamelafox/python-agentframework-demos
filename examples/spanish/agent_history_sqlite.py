@@ -38,11 +38,11 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
 
 
@@ -111,7 +111,7 @@ async def main() -> None:
 
     # Fase 1: Iniciar una conversación con un proveedor de historial en SQLite
     print("\n[bold]=== Sesión persistente en SQLite ===[/bold]")
-    print("[dim]--- Fase 1: Iniciando conversación ---[/dim]")
+    print("[bold]--- Fase 1: Iniciando conversación ---[/bold]")
 
     sqlite_provider = SQLiteHistoryProvider(db_path=db_path)
 
@@ -132,12 +132,8 @@ async def main() -> None:
     response = await agent.run("¿Y París?", session=session)
     print(f"[green]Agente:[/green] {response.text}")
 
-    messages = await sqlite_provider.get_messages(session_id)
-    print(f"[dim]Mensajes guardados en SQLite: {len(messages)}[/dim]")
-    sqlite_provider.close()
-
     # Fase 2: Simular un reinicio de la app — reconectar al mismo session_id en SQLite
-    print("\n[dim]--- Fase 2: Reanudando después del 'reinicio' ---[/dim]")
+    print("\n[bold]--- Fase 2: Reanudando después del 'reinicio' ---[/bold]")
     sqlite_provider2 = SQLiteHistoryProvider(db_path=db_path)
 
     agent2 = Agent(
@@ -152,7 +148,6 @@ async def main() -> None:
     print("[blue]Usuario:[/blue] ¿Cuál de las ciudades por las que pregunté tuvo mejor clima?")
     response = await agent2.run("¿Cuál de las ciudades por las que pregunté tuvo mejor clima?", session=session2)
     print(f"[green]Agente:[/green] {response.text}")
-    print("[dim]Nota: El agente recordó la conversación de la Fase 1 gracias a la persistencia en SQLite.[/dim]")
 
     sqlite_provider2.close()
 

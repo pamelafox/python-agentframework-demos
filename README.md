@@ -117,13 +117,13 @@ If you want to run the scripts locally, you need to set up the `GITHUB_TOKEN` en
     export GITHUB_TOKEN=your_personal_access_token
     ```
 
-10. Optionally, you can use a model other than "gpt-5-mini" by setting the `GITHUB_MODEL` environment variable. Use a model that supports function calling, such as: `gpt-5`, `gpt-5-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
+10. Optionally, you can use a model other than "gpt-4.1-mini" by setting the `GITHUB_MODEL` environment variable. Use a model that supports function calling, such as: `gpt-5`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `AI21-Jamba-1.5-Large`, `AI21-Jamba-1.5-Mini`, `Codestral-2501`, `Cohere-command-r`, `Ministral-3B`, `Mistral-Large-2411`, `Mistral-Nemo`, `Mistral-small`
 
 ## Using Azure AI Foundry models
 
 You can run all examples in this repository using GitHub Models. If you want to run the examples using models from Azure AI Foundry instead, you need to provision the Azure AI resources, which will incur costs.
 
-This project includes infrastructure as code (IaC) to provision Azure OpenAI deployments of "gpt-5-mini" and "text-embedding-3-large" via Azure AI Foundry. The IaC is defined in the `infra` directory and uses the Azure Developer CLI to provision the resources.
+This project includes infrastructure as code (IaC) to provision Azure OpenAI deployments of "gpt-4.1-mini" and "text-embedding-3-large" via Azure AI Foundry. The IaC is defined in the `infra` directory and uses the Azure Developer CLI to provision the resources.
 
 1. Make sure the [Azure Developer CLI (azd)](https://aka.ms/install-azd) is installed.
 
@@ -194,8 +194,6 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_with_subagent.py](examples/agent_with_subagent.py) | Context isolation with sub-agents to keep prompts focused on relevant tools. |
 | [agent_without_subagent.py](examples/agent_without_subagent.py) | Context bloat example where one agent carries all tool schemas in a single prompt. |
 | [agent_summarization.py](examples/agent_summarization.py) | Context compaction via summarization middleware to reduce token usage in long conversations. |
-| [workflow_magenticone.py](examples/workflow_magenticone.py) | A MagenticOne multi-agent workflow. |
-| [workflow_hitl.py](examples/workflow_hitl.py) | Human-in-the-loop (HITL) for tool-enabled agents with human feedback. |
 | [agent_middleware.py](examples/agent_middleware.py) | Agent, chat, and function middleware for logging, timing, and blocking. |
 | [agent_knowledge_aisearch.py](examples/agent_knowledge_aisearch.py) | Knowledge retrieval (RAG) using Azure AI Search with AgentFrameworkAzureAISearchRAG. |
 | [agent_knowledge_sqlite.py](examples/agent_knowledge_sqlite.py) | Knowledge retrieval (RAG) using a custom context provider with SQLite FTS5. |

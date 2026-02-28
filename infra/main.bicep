@@ -41,7 +41,7 @@ param environmentName string
 param location string
 
 @description('Name of the GPT model to deploy')
-param azureOpenaiChatModel string = 'gpt-5-mini'
+param azureOpenaiChatModel string = 'gpt-4.1-mini'
 
 @description('Version of the GPT model to deploy')
 // See version availability in this table:
@@ -49,7 +49,7 @@ param azureOpenaiChatModel string = 'gpt-5-mini'
 param azureOpenaiChatModelVersion string = '2025-08-07'
 
 @description('Name of the model deployment (can be different from the model name)')
-param azureOpenaiChatDeployment string = 'gpt-5-mini'
+param azureOpenaiChatDeployment string = 'gpt-4.1-mini'
 
 @description('Capacity of the GPT deployment')
 // You can increase this, but capacity is limited per model/region, so you will get errors if you go over

@@ -38,11 +38,11 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
 
 
@@ -96,19 +96,19 @@ async def example_agent_with_memory() -> None:
     )
 
     # Paso 1: Enseñarle una preferencia al agente
-    print("\n[dim]--- Paso 1: Enseñando una preferencia ---[/dim]")
+    print("\n[bold]--- Paso 1: Enseñando una preferencia ---[/bold]")
     print("[blue]Usuario:[/blue] Recuerda que mi ciudad favorita es Tokio.")
     response = await agent.run("Recuerda que mi ciudad favorita es Tokio.")
     print(f"[green]Agente:[/green] {response.text}")
 
     # Paso 2: Pedirle al agente que recuerde la preferencia
-    print("\n[dim]--- Paso 2: Recordando una preferencia ---[/dim]")
+    print("\n[bold]--- Paso 2: Recordando una preferencia ---[/bold]")
     print("[blue]Usuario:[/blue] ¿Cuál es mi ciudad favorita?")
     response = await agent.run("¿Cuál es mi ciudad favorita?")
     print(f"[green]Agente:[/green] {response.text}")
 
     # Paso 3: Usar una herramienta y verificar que recuerde detalles del resultado
-    print("\n[dim]--- Paso 3: Uso de herramientas con memoria ---[/dim]")
+    print("\n[bold]--- Paso 3: Uso de herramientas con memoria ---[/bold]")
     print("[blue]Usuario:[/blue] ¿Cómo está el clima en París?")
     response = await agent.run("¿Cómo está el clima en París?")
     print(f"[green]Agente:[/green] {response.text}")
@@ -119,21 +119,6 @@ async def example_agent_with_memory() -> None:
 
 
 async def main() -> None:
-    """Ejecuta el ejemplo de memoria en Redis."""
-    # Verificar que Redis tenga el módulo RediSearch
-    import redis as redis_client
-
-    r = redis_client.from_url(REDIS_URL)
-    try:
-        r.execute_command("FT._LIST")
-    except Exception:
-        print(f"[red]El Redis en {REDIS_URL} no tiene el módulo RediSearch.[/red]")
-        return
-    finally:
-        r.close()
-
-    print("[dim]Redis Stack con RediSearch verificado.[/dim]")
-
     await example_agent_with_memory()
 
     if async_credential:

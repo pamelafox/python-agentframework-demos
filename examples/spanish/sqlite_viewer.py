@@ -6,8 +6,8 @@ import sqlite3
 import sys
 
 from rich import print
-from rich.console import Group
 from rich.panel import Panel
+from rich.syntax import Syntax
 
 DB_PATH = "chat_history.sqlite3"
 
@@ -57,34 +57,20 @@ for session_id, count in sessions:
         "SELECT message_json FROM messages WHERE session_id = ? ORDER BY id", (session_id,)
     ).fetchall()
 
-    panels = []
-    for i, (message_json,) in enumerate(rows):
+    parts = []
+    for message_json, in rows:
         try:
-            parsed = json.loads(message_json)
-            role = parsed.get("role", {}).get("value", "unknown")
-            contents = parsed.get("contents", [])
-            # Extraer texto para mostrar
-            parts = []
-            for c in contents:
-                if c.get("type") == "text":
-                    parts.append(c["text"])
-                elif c.get("type") == "function_call":
-                    parts.append(f"[llamada de herramienta] {c['name']}({c['arguments']})")
-                elif c.get("type") == "function_result":
-                    parts.append(f"[resultado de herramienta] {c['result']}")
-            display = "\n".join(parts) if parts else json.dumps(parsed, indent=2)
-            color = {"user": "blue", "assistant": "green", "tool": "yellow"}.get(role, "white")
-            panels.append(
-                Panel(display, title=f"[bold {color}]{role}[/bold {color}] [dim]({i + 1}/{count})[/dim]")
-            )
+            formatted = json.dumps(json.loads(message_json), indent=2)
         except json.JSONDecodeError:
-            panels.append(Panel(message_json, title=f"[dim]elemento {i + 1}/{count}[/dim]"))
-
+            formatted = message_json
+        parts.append(formatted)
+    combined = "\n---\n".join(parts)
+    content = Syntax(combined, "json", theme="monokai", word_wrap=True)
     print(
         Panel(
-            Group(*panels),
+            content,
             title=f"[bold cyan]{session_id}[/bold cyan]",
-            subtitle=f"[dim]{count} mensaje(s)[/dim]",
+            subtitle=f"[dim]{count} elemento(s)[/dim]",
         )
     )
     print()

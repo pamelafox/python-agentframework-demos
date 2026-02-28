@@ -12,7 +12,8 @@
     "customizations": {
         "vscode": {
             "settings": {
-                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.terminal.activateEnvironment": true,
                 "remote.autoForwardPorts": false,
                 "python.createEnvironment.trigger": "off",
                 "python.analysis.typeCheckingMode": "off"
@@ -23,5 +24,6 @@
             ]
         }
     },
+    "postCreateCommand": "uv sync",
     "remoteUser": "vscode"
 }

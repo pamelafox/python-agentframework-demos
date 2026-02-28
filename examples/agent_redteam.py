@@ -37,11 +37,11 @@ elif API_HOST == "github":
     client = OpenAIChatClient(
         base_url="https://models.github.ai/inference",
         api_key=os.environ["GITHUB_TOKEN"],
-        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-5-mini"),
+        model_id=os.getenv("GITHUB_MODEL", "openai/gpt-4.1-mini"),
     )
 else:
     client = OpenAIChatClient(
-        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+        api_key=os.environ["OPENAI_API_KEY"], model_id=os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     )
 
 
@@ -74,9 +74,9 @@ agent = Agent(
 
 async def agent_callback(messages, stream=False, session_state=None, context=None) -> dict:
     """Callback that interfaces between RedTeam and the agent."""
-    query = messages[-1].content
+    latest_message = messages[-1]["content"]
     try:
-        response = await agent.run(query)
+        response = await agent.run(latest_message)
         return {"messages": [{"content": response.text, "role": "assistant"}]}
     except Exception as e:
         logger.error(f"Error during agent run: {e}")
