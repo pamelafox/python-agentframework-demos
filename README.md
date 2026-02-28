@@ -186,17 +186,38 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_tool.py](examples/agent_tool.py) | An agent with a single weather tool. |
 | [agent_tools.py](examples/agent_tools.py) | A weekend planning agent with multiple tools. |
 | [agent_session.py](examples/agent_session.py) | In-memory sessions for multi-turn conversations with memory across messages. |
+| [agent_history_sqlite.py](examples/agent_history_sqlite.py) | Persistent chat history with a custom SQLite history provider for local file-based conversation persistence. |
 | [agent_history_redis.py](examples/agent_history_redis.py) | Persistent chat history with Redis for conversation history that survives restarts. |
+| [agent_memory_redis.py](examples/agent_memory_redis.py) | Long-term memory with RedisContextProvider, storing and retrieving conversational context from Redis. |
+| [agent_memory_mem0.py](examples/agent_memory_mem0.py) | Long-term memory with Mem0 OSS, extracting and recalling distilled user facts across sessions. |
 | [agent_supervisor.py](examples/agent_supervisor.py) | A supervisor orchestrating activity and recipe sub-agents. |
+| [agent_with_subagent.py](examples/agent_with_subagent.py) | Context isolation with sub-agents to keep prompts focused on relevant tools. |
+| [agent_without_subagent.py](examples/agent_without_subagent.py) | Context bloat example where one agent carries all tool schemas in a single prompt. |
+| [agent_summarization.py](examples/agent_summarization.py) | Context compaction via summarization middleware to reduce token usage in long conversations. |
 | [agent_middleware.py](examples/agent_middleware.py) | Agent, chat, and function middleware for logging, timing, and blocking. |
+| [agent_knowledge_aisearch.py](examples/agent_knowledge_aisearch.py) | Knowledge retrieval (RAG) using Azure AI Search with AgentFrameworkAzureAISearchRAG. |
 | [agent_knowledge_sqlite.py](examples/agent_knowledge_sqlite.py) | Knowledge retrieval (RAG) using a custom context provider with SQLite FTS5. |
+| [agent_knowledge_pg.py](examples/agent_knowledge_pg.py) | Knowledge retrieval (RAG) with PostgreSQL hybrid search (pgvector + full-text) using Reciprocal Rank Fusion. |
+| [agent_knowledge_pg_rewrite.py](examples/agent_knowledge_pg_rewrite.py) | Knowledge retrieval with query rewriting for multi-turn conversations over PostgreSQL. |
 | [agent_knowledge_postgres.py](examples/agent_knowledge_postgres.py) | Knowledge retrieval (RAG) with PostgreSQL hybrid search (pgvector + full-text) using Reciprocal Rank Fusion. |
 | [agent_mcp_remote.py](examples/agent_mcp_remote.py) | An agent using a remote MCP server (Microsoft Learn) for documentation search. |
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
+| [workflow_rag_ingest.py](examples/workflow_rag_ingest.py) | A RAG ingestion pipeline using plain Python executors: fetch a document with markitdown, split into chunks, and embed with an OpenAI model. |
+| [workflow_agents.py](examples/workflow_agents.py) | A workflow with AI agents as executors: a Writer drafts content and a Reviewer provides feedback. |
+| [workflow_agents_sequential.py](examples/workflow_agents_sequential.py) | A sequential orchestration using `SequentialBuilder`: Writer and Reviewer run in order while sharing full conversation history. |
+| [workflow_agents_streaming.py](examples/workflow_agents_streaming.py) | The same Writer → Reviewer workflow using `run(stream=True)` to observe `executor_invoked`, `executor_completed`, and streaming `output` events in real-time. |
+| [workflow_conditional.py](examples/workflow_conditional.py) | A minimal workflow with conditional edges: the Reviewer routes to a Publisher (approved) or Editor (needs revision) based on a sentinel token. |
+| [workflow_conditional_structured.py](examples/workflow_conditional_structured.py) | The same conditional-edge routing pattern, but with structured reviewer output (`response_format`) for typed branch decisions instead of sentinel string matching. |
+| [workflow_conditional_state.py](examples/workflow_conditional_state.py) | A stateful conditional workflow with iterative revision loops: stores the latest draft in workflow state and publishes from that state after approval. |
+| [workflow_conditional_state_isolated.py](examples/workflow_conditional_state_isolated.py) | The stateful conditional workflow using a `create_workflow(...)` factory to build fresh agents/workflow per task for state isolation and thread safety. |
+| [workflow_switch_case.py](examples/workflow_switch_case.py) | A workflow with switch-case routing: a Classifier agent uses structured outputs to categorize a message and route to a specialized handler. |
+| [workflow_converge.py](examples/workflow_converge.py) | A branch-and-converge workflow: Reviewer routes to Publisher or Editor, then converges before final summary output. |
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
+| [agent_evaluation_generate.py](examples/agent_evaluation_generate.py) | Generate synthetic evaluation data for the travel planner agent. |
 | [agent_evaluation.py](examples/agent_evaluation.py) | Evaluate a travel planner agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators) agent evaluators (IntentResolution, ToolCallAccuracy, TaskAdherence, ResponseCompleteness). Optionally set `AZURE_AI_PROJECT` in `.env` to log results to [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk). |
+| [agent_evaluation_batch.py](examples/agent_evaluation_batch.py) | Batch evaluation of agent responses using Azure AI Evaluation's `evaluate()` function. |
 | [agent_redteam.py](examples/agent_redteam.py) | Red-team a financial advisor agent using [Azure AI Evaluation](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/red-teaming-agent) to test resilience against adversarial attacks across risk categories (Violence, HateUnfairness, Sexual, SelfHarm). Requires `AZURE_AI_PROJECT` in `.env`. |
 
 ## Using the Aspire Dashboard for telemetry
