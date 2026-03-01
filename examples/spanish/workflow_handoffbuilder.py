@@ -68,19 +68,19 @@ async def main() -> None:
 
         triage = Agent(
             client=client,
-            name="triage",
+            name="Triaje",
             instructions=(
-                "Eres un coordinador de triage para un equipo de creación de contenido. "
+                "Eres un coordinador de triaje para un equipo de creación de contenido. "
                 "Analiza la solicitud del usuario y haz handoff al agente más adecuado: "
-                "'researcher' para investigación (paso inicial preferido para la mayoría de solicitudes), "
-                "'writer' para redacción o 'editor' para revisión. "
+                "'Investigador' para investigación (paso inicial preferido para la mayoría de solicitudes), "
+                "'Escritor' para redacción o 'Editor' para revisión. "
                 "NO produzcas contenido tú — solo decide quién debe empezar y haz handoff."
             ),
         )
 
         researcher = Agent(
             client=client,
-            name="researcher",
+            name="Investigador",
             instructions=(
                 "Eres un investigador. Usa la herramienta de búsqueda de Microsoft Learn para encontrar "
                 "documentación relevante y actualizada sobre el tema. "
@@ -89,29 +89,29 @@ async def main() -> None:
                 "'agent framework workflow', 'agent framework orchestrations', etc. "
                 "NO lo confundas con Microsoft Bot Framework — son productos distintos. "
                 "Produce 3-5 viñetas concisas resumiendo tus hallazgos. "
-                "Al terminar, haz handoff al writer."
+                "Al terminar, haz handoff al Escritor."
             ),
             tools=[mcp_server],
         )
 
         writer = Agent(
             client=client,
-            name="writer",
+            name="Escritor",
             instructions=(
                 "Eres un escritor de redes sociales especializado en LinkedIn. "
                 "Toma las viñetas del investigador y escribe un post de LinkedIn con gancho "
                 "(80-120 palabras). Usa una apertura tipo hook, párrafos cortos y un CTA claro. "
-                "Incluye 2-3 hashtags relevantes al final. Al terminar, haz handoff al editor."
+                "Incluye 2-3 hashtags relevantes al final. Al terminar, haz handoff al Editor."
             ),
         )
 
         editor = Agent(
             client=client,
-            name="editor",
+            name="Editor",
             instructions=(
-                "Eres un editor de LinkedIn. Revisa el borrador del writer por claridad, tono y engagement. "
+                "Eres un editor de LinkedIn. Revisa el borrador del Escritor por claridad, tono y engagement. "
                 "Si ves problemas (hook débil, relleno, CTA vago, formato pobre), "
-                "da 2-3 críticas específicas y haz handoff al writer para revisión. "
+                "da 2-3 críticas específicas y haz handoff al Escritor para revisión. "
                 "Si el borrador está sólido o ya fue revisado, entrega la versión pulida "
                 "con el prefijo 'FINAL:' en la primera línea. "
                 "Cada respuesta DEBE O hacer handoff O entregar FINAL — nunca ambas."
