@@ -200,15 +200,24 @@ Puedes ejecutar los ejemplos en este repositorio ejecutando los scripts en el di
 | [agent_mcp_local.py](agent_mcp_local.py) | Un agente conectado a un servidor MCP local (p. ej. para registro de gastos). |
 | [openai_tool_calling.py](openai_tool_calling.py) | Llamadas a herramientas con el SDK de OpenAI de bajo nivel, mostrando despacho manual de herramientas. |
 | [workflow_rag_ingest.py](workflow_rag_ingest.py) | Un pipeline de ingesta para RAG con ejecutores Python puros: descarga un documento con markitdown, lo divide en fragmentos y genera embeddings con un modelo de OpenAI. |
+| [workflow_fan_out_fan_in_edges.py](workflow_fan_out_fan_in_edges.py) | Fan-out/fan-in con grupos de aristas explícitos usando `add_fan_out_edges` y `add_fan_in_edges`. |
+| [workflow_aggregator_summary.py](workflow_aggregator_summary.py) | Fan-out/fan-in con resumen por LLM: sintetiza salidas de expertos en un brief ejecutivo. |
+| [workflow_aggregator_structured.py](workflow_aggregator_structured.py) | Fan-out/fan-in con extracción estructurada por LLM en un modelo Pydantic tipado (`response_format`). |
+| [workflow_aggregator_voting.py](workflow_aggregator_voting.py) | Fan-out/fan-in con agregación por voto mayoritario entre clasificadores (conteo de lógica pura). |
+| [workflow_aggregator_ranked.py](workflow_aggregator_ranked.py) | Fan-out/fan-in con LLM como juez: puntúa y ordena múltiples candidatos en una lista tipada. |
 | [workflow_agents.py](workflow_agents.py) | Un workflow con agentes de IA como ejecutores: un Escritor redacta contenido y un Revisor da retroalimentación. |
 | [workflow_agents_sequential.py](workflow_agents_sequential.py) | Una orquestación secuencial usando `SequentialBuilder`: Escritor y Revisor se ejecutan en orden compartiendo todo el historial de la conversación. |
 | [workflow_agents_streaming.py](workflow_agents_streaming.py) | El mismo workflow Escritor → Revisor usando `run(stream=True)` para observar los eventos `executor_invoked`, `executor_completed` y `output` en tiempo real. |
+| [workflow_agents_concurrent.py](workflow_agents_concurrent.py) | Orquestación concurrente usando `ConcurrentBuilder`: ejecuta agentes especialistas en paralelo y junta las conversaciones. |
 | [workflow_conditional.py](workflow_conditional.py) | Un workflow mínimo con aristas condicionales: el Revisor enruta al Publicador (aprobado) o al Editor (necesita revisión) según una señal de texto. |
 | [workflow_conditional_structured.py](workflow_conditional_structured.py) | El mismo patrón de enrutamiento con aristas condicionales, pero usando salida estructurada del revisor (`response_format`) para decisiones tipadas en vez de matching por cadena. |
 | [workflow_conditional_state.py](workflow_conditional_state.py) | Un workflow condicional con estado y bucle iterativo: guarda el último borrador en el estado del workflow y publica desde ese estado tras la aprobación. |
 | [workflow_conditional_state_isolated.py](workflow_conditional_state_isolated.py) | El workflow condicional con estado usando una fábrica `create_workflow(...)` para crear agentes/workflow nuevos por tarea y así aislar estado e hilos de agente. |
 | [workflow_switch_case.py](workflow_switch_case.py) | Un workflow con enrutamiento switch-case: un agente Clasificador usa salidas estructuradas para categorizar un mensaje y enrutarlo al manejador especializado. |
+| [workflow_multi_selection_edge_group.py](workflow_multi_selection_edge_group.py) | Enrutamiento multi-selección con LLM usando `add_multi_selection_edge_group` para activar uno o varios manejadores. |
 | [workflow_converge.py](workflow_converge.py) | Un workflow con rama y convergencia: Revisor enruta a Publicador o Editor y luego converge antes del resumen final. |
+| [workflow_handoffbuilder.py](workflow_handoffbuilder.py) | Orquestación de handoff autónoma usando `HandoffBuilder` (los agentes se transfieren el control sin HITL). |
+| [workflow_handoffbuilder_rules.py](workflow_handoffbuilder_rules.py) | Orquestación de handoff con reglas explícitas usando `HandoffBuilder.add_handoff()`. |
 | [agent_otel_aspire.py](agent_otel_aspire.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados al [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](agent_otel_appinsights.py) | Un agente con trazas, métricas y logs estructurados de OpenTelemetry exportados a [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requiere aprovisionamiento de Azure con `azd provision`. |
 | [agent_evaluation_generate.py](agent_evaluation_generate.py) | Genera datos sintéticos de evaluación para el agente planificador de viajes. |

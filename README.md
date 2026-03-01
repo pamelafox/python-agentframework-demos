@@ -205,15 +205,24 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
 | [workflow_rag_ingest.py](examples/workflow_rag_ingest.py) | A RAG ingestion pipeline using plain Python executors: fetch a document with markitdown, split into chunks, and embed with an OpenAI model. |
+| [workflow_fan_out_fan_in_edges.py](examples/workflow_fan_out_fan_in_edges.py) | Fan-out/fan-in with explicit edge groups using `add_fan_out_edges` and `add_fan_in_edges`. |
+| [workflow_aggregator_summary.py](examples/workflow_aggregator_summary.py) | Fan-out/fan-in with LLM summarization: synthesize expert outputs into an executive brief. |
+| [workflow_aggregator_structured.py](examples/workflow_aggregator_structured.py) | Fan-out/fan-in with LLM structured extraction into a typed Pydantic model (`response_format`). |
+| [workflow_aggregator_voting.py](examples/workflow_aggregator_voting.py) | Fan-out/fan-in with majority-vote aggregation across multiple classifiers (pure logic tally). |
+| [workflow_aggregator_ranked.py](examples/workflow_aggregator_ranked.py) | Fan-out/fan-in with LLM-as-judge ranking: score and rank multiple candidates into a typed list. |
 | [workflow_agents.py](examples/workflow_agents.py) | A workflow with AI agents as executors: a Writer drafts content and a Reviewer provides feedback. |
 | [workflow_agents_sequential.py](examples/workflow_agents_sequential.py) | A sequential orchestration using `SequentialBuilder`: Writer and Reviewer run in order while sharing full conversation history. |
 | [workflow_agents_streaming.py](examples/workflow_agents_streaming.py) | The same Writer → Reviewer workflow using `run(stream=True)` to observe `executor_invoked`, `executor_completed`, and streaming `output` events in real-time. |
+| [workflow_agents_concurrent.py](examples/workflow_agents_concurrent.py) | Concurrent orchestration using `ConcurrentBuilder`: run specialist agents in parallel and collect merged conversations. |
 | [workflow_conditional.py](examples/workflow_conditional.py) | A minimal workflow with conditional edges: the Reviewer routes to a Publisher (approved) or Editor (needs revision) based on a sentinel token. |
 | [workflow_conditional_structured.py](examples/workflow_conditional_structured.py) | The same conditional-edge routing pattern, but with structured reviewer output (`response_format`) for typed branch decisions instead of sentinel string matching. |
 | [workflow_conditional_state.py](examples/workflow_conditional_state.py) | A stateful conditional workflow with iterative revision loops: stores the latest draft in workflow state and publishes from that state after approval. |
 | [workflow_conditional_state_isolated.py](examples/workflow_conditional_state_isolated.py) | The stateful conditional workflow using a `create_workflow(...)` factory to build fresh agents/workflow per task for state isolation and thread safety. |
 | [workflow_switch_case.py](examples/workflow_switch_case.py) | A workflow with switch-case routing: a Classifier agent uses structured outputs to categorize a message and route to a specialized handler. |
+| [workflow_multi_selection_edge_group.py](examples/workflow_multi_selection_edge_group.py) | LLM-powered multi-selection routing using `add_multi_selection_edge_group` to activate one-or-many downstream handlers. |
 | [workflow_converge.py](examples/workflow_converge.py) | A branch-and-converge workflow: Reviewer routes to Publisher or Editor, then converges before final summary output. |
+| [workflow_handoffbuilder.py](examples/workflow_handoffbuilder.py) | Autonomous handoff orchestration using `HandoffBuilder` (agents transfer control without human-in-the-loop). |
+| [workflow_handoffbuilder_rules.py](examples/workflow_handoffbuilder_rules.py) | Handoff orchestration with explicit routing rules using `HandoffBuilder.add_handoff()`. |
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
 | [agent_evaluation_generate.py](examples/agent_evaluation_generate.py) | Generate synthetic evaluation data for the travel planner agent. |

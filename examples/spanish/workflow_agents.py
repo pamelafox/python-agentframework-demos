@@ -48,7 +48,7 @@ else:
 # igual que las subclases de Executor en workflow_rag_ingest.py.
 writer = Agent(
     client=client,
-    name="Writer",
+    name="Escritor",
     instructions=(
         "Eres un escritor de contenido conciso. "
         "Escribe un artículo corto (2-3 párrafos) claro y atractivo sobre el tema del usuario. "
@@ -58,7 +58,7 @@ writer = Agent(
 
 reviewer = Agent(
     client=client,
-    name="Reviewer",
+    name="Revisor",
     instructions=(
         "Eres un revisor de contenido reflexivo. "
         "Lee el borrador del escritor y ofrece retroalimentación específica y constructiva. "

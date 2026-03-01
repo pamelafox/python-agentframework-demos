@@ -37,6 +37,7 @@ Each example .py file should have a corresponding file with the same name under 
 * Identifiers (functions/classes/vars): English
 * User-facing output/data (e.g., example responses, sample values): Spanish
 * HITL control words: bilingual (approve/aprobar, exit/salir)
+* Agent or workflow names: Spanish ("Escritor" instead of "Writer")
 
 Use informal (tuteo) LATAM Spanish, tu not usted, puedes not podes, etc. The content is technical so if a word is best kept in English, then do so.
 
