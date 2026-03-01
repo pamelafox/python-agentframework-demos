@@ -133,7 +133,7 @@ billing = BillingExecutor(id="billing")
 
 workflow = (
     WorkflowBuilder(
-        name="MultiSelectionEdgeGroup",
+        name="SeleccionMultiple",
         description="One input can route to one-or-many targets via a selection function.",
         start_executor=parse_ticket,
     )
