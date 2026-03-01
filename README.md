@@ -191,14 +191,10 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_memory_redis.py](examples/agent_memory_redis.py) | Long-term memory with RedisContextProvider, storing and retrieving conversational context from Redis. |
 | [agent_memory_mem0.py](examples/agent_memory_mem0.py) | Long-term memory with Mem0 OSS, extracting and recalling distilled user facts across sessions. |
 | [agent_supervisor.py](examples/agent_supervisor.py) | A supervisor orchestrating activity and recipe sub-agents. |
-<<<<<<< HEAD
 | [agent_with_subagent.py](examples/agent_with_subagent.py) | Context isolation with sub-agents to keep prompts focused on relevant tools. |
 | [agent_without_subagent.py](examples/agent_without_subagent.py) | Context bloat example where one agent carries all tool schemas in a single prompt. |
 | [agent_summarization.py](examples/agent_summarization.py) | Context compaction via summarization middleware to reduce token usage in long conversations. |
 | [workflow_magenticone.py](examples/workflow_magenticone.py) | A MagenticOne multi-agent workflow. |
-| [workflow_hitl.py](examples/workflow_hitl.py) | Human-in-the-loop (HITL) for tool-enabled agents with human feedback. |
-=======
->>>>>>> main
 | [agent_middleware.py](examples/agent_middleware.py) | Agent, chat, and function middleware for logging, timing, and blocking. |
 | [agent_knowledge_aisearch.py](examples/agent_knowledge_aisearch.py) | Knowledge retrieval (RAG) using Azure AI Search with AgentFrameworkAzureAISearchRAG. |
 | [agent_knowledge_sqlite.py](examples/agent_knowledge_sqlite.py) | Knowledge retrieval (RAG) using a custom context provider with SQLite FTS5. |
@@ -208,7 +204,6 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [agent_mcp_remote.py](examples/agent_mcp_remote.py) | An agent using a remote MCP server (Microsoft Learn) for documentation search. |
 | [agent_mcp_local.py](examples/agent_mcp_local.py) | An agent connected to a local MCP server (e.g. for expense logging). |
 | [openai_tool_calling.py](examples/openai_tool_calling.py) | Tool calling with the low-level OpenAI SDK, showing manual tool dispatch. |
-<<<<<<< HEAD
 | [workflow_rag_ingest.py](examples/workflow_rag_ingest.py) | A RAG ingestion pipeline using plain Python executors: fetch a document with markitdown, split into chunks, and embed with an OpenAI model. |
 | [workflow_agents.py](examples/workflow_agents.py) | A workflow with AI agents as executors: a Writer drafts content and a Reviewer provides feedback. |
 | [workflow_agents_sequential.py](examples/workflow_agents_sequential.py) | A sequential orchestration using `SequentialBuilder`: Writer and Reviewer run in order while sharing full conversation history. |
@@ -219,8 +214,6 @@ You can run the examples in this repository by executing the scripts in the `exa
 | [workflow_conditional_state_isolated.py](examples/workflow_conditional_state_isolated.py) | The stateful conditional workflow using a `create_workflow(...)` factory to build fresh agents/workflow per task for state isolation and thread safety. |
 | [workflow_switch_case.py](examples/workflow_switch_case.py) | A workflow with switch-case routing: a Classifier agent uses structured outputs to categorize a message and route to a specialized handler. |
 | [workflow_converge.py](examples/workflow_converge.py) | A branch-and-converge workflow: Reviewer routes to Publisher or Editor, then converges before final summary output. |
-=======
->>>>>>> main
 | [agent_otel_aspire.py](examples/agent_otel_aspire.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to the [Aspire Dashboard](https://aspire.dev/dashboard/standalone/). |
 | [agent_otel_appinsights.py](examples/agent_otel_appinsights.py) | An agent with OpenTelemetry tracing, metrics, and structured logs exported to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview). Requires Azure provisioning via `azd provision`. |
 | [agent_evaluation_generate.py](examples/agent_evaluation_generate.py) | Generate synthetic evaluation data for the travel planner agent. |
