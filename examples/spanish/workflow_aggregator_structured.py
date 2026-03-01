@@ -15,13 +15,14 @@ Ejecutar:
 import asyncio
 import os
 import sys
+from typing import Literal
 
 from agent_framework import Agent, AgentExecutorResponse, Executor, Message, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from typing_extensions import Literal, Never
+from typing_extensions import Never
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
@@ -93,7 +94,8 @@ class ExtractReview(Executor):
                 role="system",
                 text=(
                     "Eres un revisor de un comité de contratación. "
-                    "Con base en las siguientes evaluaciones de entrevistadores, produce una revisión estructurada del candidato."
+                    "Con base en las siguientes evaluaciones de entrevistadores, "
+                    "produce una revisión estructurada del candidato."
                 ),
             ),
             Message(role="user", text=combined),
@@ -107,7 +109,7 @@ dispatcher = DispatchPrompt(id="dispatcher")
 
 technical_interviewer = Agent(
     client=client,
-    name="TechnicalInterviewer",
+    name="EntrevistadorTecnico",
     instructions=(
         "Eres un ingeniero senior haciendo una entrevista técnica. "
         "Evalúa las habilidades técnicas del candidato, su conocimiento de arquitectura y su capacidad de programar. "
@@ -117,7 +119,7 @@ technical_interviewer = Agent(
 
 behavioral_interviewer = Agent(
     client=client,
-    name="BehavioralInterviewer",
+    name="EntrevistadorConductual",
     instructions=(
         "Eres un especialista de RR.HH. haciendo una entrevista conductual. "
         "Evalúa comunicación, trabajo en equipo, resolución de conflictos y liderazgo. "
@@ -127,7 +129,7 @@ behavioral_interviewer = Agent(
 
 cultural_interviewer = Agent(
     client=client,
-    name="CulturalInterviewer",
+    name="EntrevistadorCultural",
     instructions=(
         "Eres un líder de equipo evaluando encaje cultural. "
         "Evalúa si el candidato se alinea con una cultura startup colaborativa y de ritmo rápido. "
@@ -139,7 +141,7 @@ extractor = ExtractReview(client=client, id="extractor")
 
 workflow = (
     WorkflowBuilder(
-        name="FanOutFanInStructured",
+        name="ExtraccionEstructurada",
         description="Fan-out/fan-in with Pydantic structured extraction.",
         start_executor=dispatcher,
         output_executors=[extractor],

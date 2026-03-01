@@ -15,13 +15,14 @@ Run:
 import asyncio
 import os
 import sys
+from typing import Literal
 
 from agent_framework import Agent, AgentExecutorResponse, Executor, Message, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from typing_extensions import Literal, Never
+from typing_extensions import Never
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
@@ -89,7 +90,13 @@ class ExtractReview(Executor):
         combined = "\n\n".join(sections)
 
         messages = [
-            Message(role="system", text="You are a hiring committee reviewer. Based on the following interviewer assessments, produce a structured candidate review."),
+            Message(
+                role="system",
+                text=(
+                    "You are a hiring committee reviewer. "
+                    "Based on the following interviewer assessments, produce a structured candidate review."
+                ),
+            ),
             Message(role="user", text=combined),
         ]
         response = await self._client.get_response(messages, options={"response_format": CandidateReview})

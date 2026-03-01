@@ -104,7 +104,7 @@ dispatcher = DispatchPrompt(id="dispatcher")
 
 keyword_classifier = Agent(
     client=client,
-    name="KeywordClassifier",
+    name="ClasificadorPalabraClave",
     instructions=(
         "Clasifica el ticket de soporte en exactamente una categoría: bug, billing, feature_request o general.\n"
         "Reglas:\n"
@@ -118,7 +118,7 @@ keyword_classifier = Agent(
 
 sentiment_classifier = Agent(
     client=client,
-    name="SentimentClassifier",
+    name="ClasificadorSentimiento",
     instructions=(
         "Clasifica el ticket de soporte en exactamente una categoría: bug, billing, feature_request o general.\n"
         "Analiza el tono emocional:\n"
@@ -132,7 +132,7 @@ sentiment_classifier = Agent(
 
 intent_classifier = Agent(
     client=client,
-    name="IntentClassifier",
+    name="ClasificadorIntencion",
     instructions=(
         "Clasifica el ticket de soporte en exactamente una categoría: bug, billing, feature_request o general.\n"
         "Enfócate en lo que el usuario quiere lograr:\n"
@@ -148,7 +148,7 @@ tally = TallyVotes(id="tally")
 
 workflow = (
     WorkflowBuilder(
-        name="FanOutFanInVoting",
+        name="VotacionFanOutFanIn",
         description="Ensemble classification with majority-vote aggregation.",
         start_executor=dispatcher,
         output_executors=[tally],

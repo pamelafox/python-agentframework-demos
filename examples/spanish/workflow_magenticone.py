@@ -56,7 +56,7 @@ local_agent = Agent(
         "Sugieres actividades locales auténticas e interesantes o lugares para visitar, "
         "usando cualquier contexto que provea la persona usuaria u otros agentes."
     ),
-    name="local_agent",
+    name="agente_local",
     description="Specialist in local activities and places.",
 )
 
@@ -66,7 +66,7 @@ language_agent = Agent(
         "Revisas planes de viaje y das recomendaciones prácticas para retos de idioma "
         "y comunicación en el destino. Si ya está bien cubierto, menciónalo con una razón clara."
     ),
-    name="language_agent",
+    name="agente_idioma",
     description="Specialist in language and communication advice.",
 )
 
@@ -79,13 +79,13 @@ travel_summary_agent = Agent(
         "No pidas confirmaciones ni permisos. "
         "YOUR FINAL RESPONSE MUST BE THE COMPLETE PLAN."
     ),
-    name="travel_summary_agent",
+    name="agente_resumen_viaje",
     description="Specialist in travel-plan synthesis.",
 )
 
 manager_agent = Agent(
     client=client,
-    name="manager_agent",
+    name="agente_coordinador",
     description="Magentic manager that coordinates specialists.",
     instructions=(
         "Coordinas especialistas para resolver tareas complejas de forma eficiente. "

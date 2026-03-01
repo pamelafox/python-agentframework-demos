@@ -24,7 +24,6 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from typing_extensions import Never
 
-
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
 
@@ -113,7 +112,7 @@ dispatcher = DispatchPrompt(id="dispatcher")
 
 bold_writer = Agent(
     client=client,
-    name="BoldWriter",
+    name="EscritorAudaz",
     instructions=(
         "Eres un copywriter audaz y dramático. "
         "Dado el brief del producto, propone UN eslogan de marketing contundente (máx. 10 palabras). "
@@ -123,7 +122,7 @@ bold_writer = Agent(
 
 minimalist_writer = Agent(
     client=client,
-    name="MinimalistWriter",
+    name="EscritorMinimalista",
     instructions=(
         "Eres un copywriter minimalista que valora la brevedad por encima de todo. "
         "Dado el brief del producto, propone UN eslogan de marketing ultra-corto (máx. 6 palabras). "
@@ -133,7 +132,7 @@ minimalist_writer = Agent(
 
 emotional_writer = Agent(
     client=client,
-    name="EmotionalWriter",
+    name="EscritorEmocional",
     instructions=(
         "Eres un copywriter con enfoque empático. "
         "Dado el brief del producto, propone UN eslogan de marketing (máx. 10 palabras) "
@@ -147,7 +146,7 @@ ranker = RankerExecutor(client=client)
 
 workflow = (
     WorkflowBuilder(
-        name="FanOutFanInRanked",
+        name="RankingFanOutFanIn",
         description="Generate slogans in parallel, then LLM-judge ranks them.",
         start_executor=dispatcher,
         output_executors=[ranker],

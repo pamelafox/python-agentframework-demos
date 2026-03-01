@@ -86,7 +86,7 @@ dispatcher = DispatchPrompt(id="dispatcher")
 
 researcher = Agent(
     client=client,
-    name="Researcher",
+    name="Investigador",
     instructions=(
         "Eres un investigador de mercado experto. "
         "Dado el prompt, proporciona insights factuales concisos, oportunidades y riesgos. "
@@ -96,7 +96,7 @@ researcher = Agent(
 
 marketer = Agent(
     client=client,
-    name="Marketer",
+    name="Estratega",
     instructions=(
         "Eres un estratega de marketing. "
         "Dado el prompt, propone una propuesta de valor clara y mensajes para la audiencia. "
@@ -120,7 +120,7 @@ summarizer = SummarizerExecutor(client=client)
 
 workflow = (
     WorkflowBuilder(
-        name="FanOutFanInLLMSummary",
+        name="ResumenLLMFanOutFanIn",
         description="Fan-out/fan-in with LLM summarization aggregation.",
         start_executor=dispatcher,
         output_executors=[summarizer],

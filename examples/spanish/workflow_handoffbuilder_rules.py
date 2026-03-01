@@ -64,40 +64,40 @@ else:
 
 triage_agent = Agent(
     client=client,
-    name="triage_agent",
+    name="agente_triaje",
     instructions=(
         "Eres un agente de triage de soporte al cliente. Saluda al cliente, entiende su problema "
-        "y haz handoff al especialista correcto: order_agent para temas de pedidos y "
-        "return_agent para devoluciones. No puedes gestionar reembolsos directamente. "
+        "y haz handoff al especialista correcto: agente_pedidos para temas de pedidos y "
+        "agente_devoluciones para devoluciones. No puedes gestionar reembolsos directamente. "
         "Cuando el caso esté resuelto, di 'Goodbye!' (Goodbye/Adiós) para terminar la sesión."
     ),
 )
 
 order_agent = Agent(
     client=client,
-    name="order_agent",
+    name="agente_pedidos",
     instructions=(
         "Atiendes consultas sobre el estado del pedido. Busca el pedido del cliente y da una actualización breve. "
-        "Al terminar, haz handoff de vuelta a triage_agent."
+        "Al terminar, haz handoff de vuelta a agente_triaje."
     ),
 )
 
 return_agent = Agent(
     client=client,
-    name="return_agent",
+    name="agente_devoluciones",
     instructions=(
         "Atiendes devoluciones de productos. Ayuda al cliente a iniciar una devolución. "
-        "Si también quiere un reembolso, haz handoff a refund_agent. "
-        "De lo contrario, haz handoff de vuelta a triage_agent al terminar."
+        "Si también quiere un reembolso, haz handoff a agente_reembolsos. "
+        "De lo contrario, haz handoff de vuelta a agente_triaje al terminar."
     ),
 )
 
 refund_agent = Agent(
     client=client,
-    name="refund_agent",
+    name="agente_reembolsos",
     instructions=(
         "Procesas reembolsos por artículos devueltos. Confirma los detalles del reembolso y avísale "
-        "al cliente cuándo puede esperar el dinero de vuelta. Haz handoff a triage_agent al terminar."
+        "al cliente cuándo puede esperar el dinero de vuelta. Haz handoff a agente_triaje al terminar."
     ),
 )
 
@@ -105,7 +105,7 @@ refund_agent = Agent(
 
 workflow = (
     HandoffBuilder(
-        name="customer_support_handoff",
+        name="handoff_soporte_cliente",
         participants=[triage_agent, order_agent, return_agent, refund_agent],
         termination_condition=lambda conversation: (
             len(conversation) > 0 and "goodbye" in conversation[-1].text.lower()

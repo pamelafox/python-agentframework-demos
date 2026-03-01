@@ -24,7 +24,6 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from typing_extensions import Never
 
-
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
 

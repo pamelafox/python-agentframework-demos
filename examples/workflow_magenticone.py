@@ -90,7 +90,7 @@ manager_agent = Agent(
     instructions=(
         "You coordinate specialists to solve complex tasks efficiently. "
         "The user is not available for follow-up questions. "
-        "If information is missing, choose sensible ass umptions and continue. "
+        "If information is missing, choose sensible assumptions and continue. "
         "Ensure the workflow ends with a complete final plan."
     ),
 )

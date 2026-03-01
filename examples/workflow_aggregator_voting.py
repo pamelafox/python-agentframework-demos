@@ -85,7 +85,7 @@ class TallyVotes(Executor):
         """Count classifier votes and yield the winning category."""
         votes: list[tuple[str, str]] = []
         for result in results:
-            classification: Classification= result.agent_response.value
+            classification: Classification = result.agent_response.value
             votes.append((result.executor_id, classification.category.value))
 
         labels = [label for _, label in votes]
