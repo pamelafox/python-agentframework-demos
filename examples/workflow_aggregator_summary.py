@@ -15,12 +15,11 @@ import asyncio
 import os
 import sys
 
-from typing import Never
-
 from agent_framework import Agent, AgentExecutorResponse, Executor, WorkflowBuilder, WorkflowContext, handler
 from agent_framework.openai import OpenAIChatClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
+from typing_extensions import Never
 
 load_dotenv(override=True)
 API_HOST = os.getenv("API_HOST", "github")
