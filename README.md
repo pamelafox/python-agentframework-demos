@@ -334,4 +334,5 @@ Telemetry data may take 2–5 minutes to appear in the portal.
 
 ## Resources
 
+* [Video series: Python + Agents (February 2026)](https://techcommunity.microsoft.com/blog/azuredevcommunityblog/learn-how-to-build-agents-and-workflows-in-python/4502144)
 * [Agent Framework Documentation](https://learn.microsoft.com/agent-framework/)
